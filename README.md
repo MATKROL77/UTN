@@ -1,7 +1,7 @@
 # Explorador de Órbitas Keplerianas — Grupo 14
 
 Complemento interactivo del proyecto integrador de **Análisis Matemático II · UTN**.
-Integrantes: **Matías Colimodio y Felipe D Ortusar**.
+Integrantes: **Matías Colimodio y Felipe de Ortuzar**.
 
 Aplicación estática construida con React, Vite y TypeScript. Los gráficos son SVG y mantienen la misma escala en ambos ejes. No requiere backend, cuentas, servicios pagos ni datos de observaciones para funcionar. El QR se genera en el dispositivo y apunta a la dirección desde la que se abrió la aplicación.
 

@@ -957,7 +957,7 @@ export default function App() {
         <div className="members">
           <span>DESARROLLADO POR</span>
           <p>
-            Matías Colimodio <i /> Felipe D Ortusar
+            Matías Colimodio <i /> Felipe de Ortuzar
           </p>
         </div>
         <span className="footer-orbit">
