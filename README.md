@@ -83,6 +83,16 @@ U = −μ / R,  R = √[(x−h)² + (y−k)²]
 - `tests/math.test.ts`: diez pruebas matemáticas y de datos, con referencias analíticas independientes.
 - `tests/browser/app.spec.ts`: tres pruebas funcionales por dispositivo, en escritorio y celular.
 
+## Despliegue automático desde GitHub Actions
+
+El workflow **Verificar y publicar explorador** valida la aplicación y publica cada push a `main` en Cloudflare Pages. También se puede ejecutar manualmente desde Actions.
+
+El token `CLOUDFLARE_API_TOKEN` puede estar en los secretos del repositorio o en su Environment de GitHub. El workflow detecta automáticamente un único Environment; si hay varios, busca cuál declara ese secreto o utiliza la variable `CLOUDFLARE_ENVIRONMENT`. En la ejecución manual se puede indicar el Environment explícitamente.
+
+La cuenta se detecta con el token. Si este tiene acceso a varias cuentas, o no permite enumerarlas, configurar `CLOUDFLARE_ACCOUNT_ID` como variable del Environment. No se imprime ni se incorpora el token al frontend.
+
+Se crea el proyecto `kepler-grupo14-utn` en la primera publicación. Para reutilizar un proyecto existente se comprueba que su despliegue anterior pertenezca al historial de este repositorio. El workflow publica únicamente después de las pruebas, y verifica la respuesta HTML del dominio público antes de marcar el despliegue como completo.
+
 ## Publicar en un nuevo proyecto de Cloudflare Pages
 
 La carpeta publicable es **`dist`**, generada con `npm run build`. Cloudflare Pages sirve todos los recursos desde el mismo origen; no hay llamadas a APIs desde la aplicación, fuentes remotas ni secretos dentro del frontend.

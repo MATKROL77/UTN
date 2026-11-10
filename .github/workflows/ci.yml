@@ -1,10 +1,19 @@
-name: Verificar explorador
+name: Verificar y publicar explorador
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment que contiene CLOUDFLARE_API_TOKEN (vacío = detectar)
+        required: false
+        type: string
 permissions:
   contents: read
+concurrency:
+  group: kepler-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -21,3 +30,63 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: "true"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sitio-verificado
+          path: dist
+          retention-days: 7
+  prepare:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      deployments: read
+    outputs:
+      environment: ${{ steps.environment.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Identificar el Environment configurado
+        id: environment
+        run: node scripts/discover-environment.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment || vars.CLOUDFLARE_ENVIRONMENT }}
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: [verify, prepare]
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.prepare.outputs.environment }}
+      url: ${{ steps.project.outputs.url }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: sitio-verificado
+          path: dist
+      - name: Crear y comprobar el proyecto de Cloudflare Pages
+        id: project
+        run: node scripts/prepare-cloudflare.mjs
+      - name: Publicar en Cloudflare Pages
+        run: npx --yes wrangler@4.160.0 pages deploy dist --project-name kepler-grupo14-utn --branch main
+      - name: Verificar la dirección pública
+        env:
+          SITE_URL: ${{ steps.project.outputs.url }}
+        run: |
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 --retry-all-errors "$SITE_URL" -o /tmp/pagina-publicada.html
+          grep -F 'Explorador de Órbitas Keplerianas' /tmp/pagina-publicada.html
+          echo "### Sitio publicado" >> "$GITHUB_STEP_SUMMARY"
+          echo "$SITE_URL" >> "$GITHUB_STEP_SUMMARY"
