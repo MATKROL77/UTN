@@ -1,11 +1,12 @@
 import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+const publishedURL = process.env.PLAYWRIGHT_BASE_URL;
 export default defineConfig({
   testDir: "./tests/browser",
   fullyParallel: true,
   workers: 2,
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: publishedURL || "http://127.0.0.1:4173",
     launchOptions: {
       executablePath:
         process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ||
@@ -26,9 +27,11 @@ export default defineConfig({
       use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
     },
   ],
-  webServer: {
-    command: "npm run preview -- --port 4173",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: publishedURL
+    ? undefined
+    : {
+        command: "npm run preview -- --port 4173",
+        url: "http://127.0.0.1:4173",
+        reuseExistingServer: !process.env.CI,
+      },
 });

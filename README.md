@@ -91,7 +91,7 @@ El token `CLOUDFLARE_API_TOKEN` puede estar en los secretos del repositorio o en
 
 La cuenta se detecta con el token. Si este tiene acceso a varias cuentas, o no permite enumerarlas, configurar `CLOUDFLARE_ACCOUNT_ID` como variable del Environment. No se imprime ni se incorpora el token al frontend.
 
-Se crea el proyecto `kepler-grupo14-utn` en la primera publicación. Para reutilizar un proyecto existente se comprueba que su despliegue anterior pertenezca al historial de este repositorio. El workflow publica únicamente después de las pruebas, y verifica la respuesta HTML del dominio público antes de marcar el despliegue como completo.
+Se crea el proyecto `kepler-grupo14-utn` en la primera publicación. Para reutilizar un proyecto existente se comprueba que su despliegue anterior pertenezca al historial de este repositorio. El workflow publica únicamente después de las pruebas, verifica la respuesta HTML del dominio público y repite las seis pruebas funcionales sobre la web publicada, en escritorio y celular, antes de marcar el despliegue como completo.
 
 ## Publicar en un nuevo proyecto de Cloudflare Pages
 
@@ -106,7 +106,7 @@ npm run deploy:create
 npm run deploy
 ```
 
-Los comandos usan Wrangler fijado a 4.160.0. El nombre propuesto es `kepler-grupo14-utn`; su disponibilidad se comprueba al crear el proyecto. La URL de producción solo debe considerarse existente después de un despliegue exitoso y una petición HTTP de verificación. El QR se adapta automáticamente al dominio definitivo.
+Los comandos usan Wrangler fijado a 4.160.0. El proyecto creado es `kepler-grupo14-utn`, publicado en https://kepler-grupo14-utn.pages.dev. El Environment de GitHub que contiene el token se llama `api token`. La URL de producción solo debe considerarse existente después de un despliegue exitoso y una petición HTTP de verificación. El QR se adapta automáticamente al dominio definitivo.
 
 Alternativamente, crear un proyecto Pages conectado a este repositorio, rama `main`, comando de compilación `npm run build`, salida `dist` y Node 24. No se necesita una variable pública con la dirección del sitio.
 
