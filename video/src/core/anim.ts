@@ -10,7 +10,7 @@ export const E = {
   inOut: (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - (-2 * u + 2) ** 3 / 2),
   soft: (u: number) => u * u * (3 - 2 * u),
   outQuint: (u: number) => 1 - (1 - u) ** 5,
-  outBack: (u: number) => 1 + 2.2 * (u - 1) ** 3 + 1.2 * (u - 1) ** 2,
+  outBack: (u: number) => (u <= 0 ? 0 : u >= 1 ? 1 : 1 + 2.2 * (u - 1) ** 3 + 1.2 * (u - 1) ** 2),
   sine: (u: number) => 0.5 - 0.5 * Math.cos(Math.PI * u),
 } satisfies Record<string, Ease>;
 

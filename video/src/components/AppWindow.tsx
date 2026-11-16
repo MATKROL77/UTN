@@ -23,6 +23,17 @@ export type Accion =
 
 export type Toma = { id: string; inicio: number; fin: number; acciones: Accion[] };
 export type Recorte = { x: number; y: number; w: number; h: number };
+export type ClaveRecorte = { t: number; r: Recorte; dur?: number };
+/** Cámara sobre la web: cada clave empieza en su t y tarda `dur` segundos en llegar al nuevo encuadre. */
+export function recorteEn(t: number, claves: ClaveRecorte[]): Recorte {
+  let r = claves[0].r;
+  for (const k of claves) {
+    if (t < k.t) break;
+    const u = E.inOut(clamp((t - k.t) / (k.dur ?? 1)));
+    r = { x: lerp(r.x, k.r.x, u), y: lerp(r.y, k.r.y, u), w: lerp(r.w, k.r.w, u), h: lerp(r.h, k.r.h, u) };
+  }
+  return r;
+}
 type Pt = { x: number; y: number };
 
 export type Metricas = {
@@ -245,7 +256,8 @@ class AppDriver implements Driver {
           const p = this.puntoPlot(a);
           this.posFin.set(i, p);
           this.metricas.clics.push({ ...p, t: a.en });
-          this.doc.querySelector("svg.orbit-plot")!.dispatchEvent(new this.win.MouseEvent("click", { bubbles: true, clientX: p.x, clientY: p.y }));
+          // PointerEvent conserva coordenadas fraccionarias (MouseEvent las trunca a enteros).
+          this.doc.querySelector("svg.orbit-plot")!.dispatchEvent(new this.win.PointerEvent("click", { bubbles: true, clientX: p.x, clientY: p.y }));
           break;
         }
       }
@@ -370,6 +382,7 @@ export function AppWindow({
         const u = (t - c.t) / 0.45;
         if (u < 0 || u > 1) return null;
         const p = aEscena(c.x, c.y);
+        if (p.x < rect.x || p.x > rect.x + rect.w || p.y < rect.y || p.y > rect.y + rect.h) return null;
         return <div key={i} className="abs" style={{ left: p.x - 30, top: p.y - 30, width: 60, height: 60, borderRadius: 30, border: `2.5px solid ${C.cyan}`, opacity: (1 - u) * 0.9 * opacidad, transform: `scale(${0.35 + u * 0.9})` }} />;
       })}
       {cur && dentro && (

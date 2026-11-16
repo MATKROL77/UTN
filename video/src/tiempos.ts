@@ -11,3 +11,6 @@ export const T = {
   /** Aparece la web con el potencial (escena 9). */
   campoApp: cue("F7.pag") - 0.3,
 };
+
+/** Aparece la web en la conclusión (escena 12). */
+export const T_CONCL_APP = cue("F11") - 0.25;

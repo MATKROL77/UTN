@@ -4,7 +4,7 @@ import { TAU, camaraWeb, deg, orbitalPoint, pathOrbita, pathSector, rad, radius,
 import { C, FONT, MONO } from "../core/theme";
 import { cue } from "../core/tl";
 import { T } from "../tiempos";
-import { AppWindow, type AppAPI, type Recorte, type Toma } from "../components/AppWindow";
+import { AppWindow, recorteEn, type AppAPI, type Recorte, type Toma } from "../components/AppWindow";
 import { Cuerpo, Foco, Lienzo, Rotulo, Trazo } from "../components/Plano";
 import { Tex } from "../components/Tex";
 import { Antetitulo, Caja, Tarjeta } from "../components/ui";
@@ -20,17 +20,6 @@ const angulo = (Ma: number, Mb: number, u: number, ref: number) => {
   while (th - ref < -Math.PI) th += TAU;
   return th;
 };
-
-type ClaveRecorte = { t: number; r: Recorte; dur?: number };
-function recorteEn(t: number, claves: ClaveRecorte[]): Recorte {
-  let r = claves[0].r;
-  for (const k of claves) {
-    if (t < k.t) break;
-    const u = E.inOut(clamp((t - k.t) / (k.dur ?? 1)));
-    r = { x: lerp(r.x, k.r.x, u), y: lerp(r.y, k.r.y, u), w: lerp(r.w, k.r.w, u), h: lerp(r.h, k.r.h, u) };
-  }
-  return r;
-}
 
 function Propia({ t }: { t: number }) {
   const c = (id: string) => cue(id);
@@ -60,7 +49,7 @@ function Propia({ t }: { t: number }) {
   const formula = prog(t, c("F2.int") - 0.3, 1.0, E.out);
   const gM = pulse(t, c("F2.medio") - 0.1, 1.6), gD = pulse(t, c("F2.dtheta") - 0.1, 1.6);
   const ley = prog(t, c("F3.ley") - 0.3, 0.6, E.out);
-  const tarjeta = inOut(t, c("F1") - 0.5, c("F1.area") + 1.3, 0.6, 0.5);
+  const tarjeta = inOut(t, c("F1") - 0.35, c("F1.area") + 1.3, 0.6, 0.5);
   const chip = inOut(t, c("F1.jac") - 0.3, c("F2.int") - 0.4, 0.5, 0.4);
   return (
     <div className="full" style={{ opacity: a }}>
@@ -127,7 +116,7 @@ function Propia({ t }: { t: number }) {
       <Caja x={m.X(2.05)} y={m.Y(-1.35)} p={iguales} dy={10}>
         <span style={{ fontFamily: MONO, fontSize: 27, color: C.blueSoft, fontWeight: 600, whiteSpace: "nowrap" }}>A₁ = {fmt(AREA1, 6)} u²</span>
       </Caja>
-      <Caja x={m.X(-8.75)} y={m.Y(3.55)} p={iguales} dy={10}>
+      <Caja x={m.X(-7.55)} y={m.Y(1.72)} p={iguales} dy={10}>
         <span style={{ fontFamily: MONO, fontSize: 27, color: C.orangeSoft, fontWeight: 600, whiteSpace: "nowrap" }}>A₂ = {fmt(AREA2, 6)} u²</span>
       </Caja>
     </div>

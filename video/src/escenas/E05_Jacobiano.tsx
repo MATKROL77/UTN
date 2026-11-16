@@ -160,7 +160,7 @@ function HaciaKepler({ t }: { t: number }) {
   }
   const fusion = prog(t, tA + dA + 0.1, 0.7);
   const naranja = prog(t, c("M10.kepler") - 0.1, 0.8, E.out);
-  const sale = 1 - prog(t, cue("F1") - 0.5, 0.5);
+  const sale = 1 - prog(t, c("M10.fin") + 0.05, 0.5);
   return (
     <div className="full" style={{ opacity: a }}>
       <Lienzo>

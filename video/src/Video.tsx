@@ -12,6 +12,11 @@ import { Tipos } from "./escenas/E03_Tipos";
 import { Coordenadas } from "./escenas/E04_Coordenadas";
 import { Jacobiano } from "./escenas/E05_Jacobiano";
 import { Kepler } from "./escenas/E07_Kepler";
+import { Potencial } from "./escenas/E08_Potencial";
+import { Python } from "./escenas/E10_Python";
+import { Ajuste } from "./escenas/E11_Ajuste";
+import { Conclusion } from "./escenas/E12_Conclusion";
+import { Final } from "./escenas/E13_Final";
 
 const cortes: [string, number, string, DefEscena["C"]][] = [
   ["intro", 0, "Presentación", Intro],
@@ -20,6 +25,11 @@ const cortes: [string, number, string, DefEscena["C"]][] = [
   ["coordenadas", cue("M6") - 0.45, "Coordenadas y transformaciones", Coordenadas],
   ["jacobiano", cue("M8") - 0.45, "Jacobiano", Jacobiano],
   ["kepler", cue("F1") - 0.5, "Segunda ley de Kepler", Kepler],
+  ["potencial", cue("F5") - 0.45, "Potencial y campo gravitatorio", Potencial],
+  ["python", cue("F9") - 0.45, "Visualizaciones en Python", Python],
+  ["ajuste", cue("F10") - 0.45, "Ajuste de parámetros", Ajuste],
+  ["conclusion", cue("F11") - 0.45, "Conclusión", Conclusion],
+  ["final", T_FINAL - 0.3, "Cierre", Final],
 ];
 
 export const ESCENAS: DefEscena[] = cortes.map(([id, ini, titulo, Comp], i) => ({
@@ -42,7 +52,6 @@ function Capitulo({ t }: { t: number }) {
 }
 
 export function Video({ t }: { t: number; v?: number }) {
-  void T_FINAL; void cue;
   return (
     <div className="stage">
       <Background t={t} />

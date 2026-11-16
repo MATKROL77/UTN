@@ -3,7 +3,7 @@ import { E, clamp, lerp, prog } from "./core/anim";
 import { C } from "./core/theme";
 import { FRASES, T_FINAL, cue } from "./core/tl";
 import { NombreTag, Presenter, poseEn, type Gesto } from "./components/Presenter";
-import { T } from "./tiempos";
+import { T, T_CONCL_APP } from "./tiempos";
 
 type Lugar = { t: number; x: number; y: number; s: number; dur?: number };
 const fuera = { izq: -340, der: 2260 };
@@ -45,7 +45,7 @@ const lugarFeli: Lugar[] = [
   { t: cue("F5") - 0.5, ...FELI_DER },
   { t: T.campoApp - 0.1, ...FELI_ESQ },
   { t: cue("F9") - 0.5, ...FELI_DER },
-  { t: cue("F11") - 0.4, ...FELI_ESQ },
+  { t: T_CONCL_APP - 0.1, ...FELI_ESQ },
   { t: cue("F12") - 0.6, x: 1660, y: 720, s: 0.96, dur: 1.0 },
   { t: T_FINAL - 0.5, x: fuera.der, y: 720, s: 0.96, dur: 0.9 },
 ];
@@ -88,7 +88,7 @@ const gestosMati: Gesto[] = [
   { t: cue("M10.kepler") - 0.2, pose: "senalarDer" },
   { t: cue("M10.fin") - 0.5, pose: "saludarDer", dur: 0.45 },
   { t: cue("F12") - 0.2, pose: "reposo", dur: 0.1 },
-  { t: cue("F12.temas"), pose: "presentarDer" },
+  { t: cue("F12.temas"), pose: "explicarDer" },
   { t: cue("F12.fis") - 0.2, pose: "reposo" },
   { t: cue("F12.fin") - 0.4, pose: "saludarDer", dur: 0.5 },
 ];
@@ -120,18 +120,18 @@ const gestosFeli: Gesto[] = [
   { t: cue("F8.cero") - 0.2, pose: "senalarIzqArriba" },
   { t: cue("F8.foco") - 0.2, pose: "explicarIzq" },
   { t: cue("F9") - 0.2, pose: "explicar" },
-  { t: cue("F9.orb") - 0.3, pose: "senalarIzqArriba" },
-  { t: cue("F9.sup") - 0.2, pose: "presentarIzq" },
-  { t: cue("F9.campo") - 0.2, pose: "senalarIzq" },
+  { t: cue("F9.orb") - 0.3, pose: "presentarIzq" },
+  { t: cue("F9.sup") - 0.2, pose: "explicar" },
+  { t: cue("F9.campo") - 0.2, pose: "presentarIzq" },
   { t: cue("F10") - 0.2, pose: "explicar" },
-  { t: cue("F10.error") - 0.2, pose: "senalarIzqArriba" },
-  { t: cue("F10.param") - 0.1, pose: "presentarIzq" },
+  { t: cue("F10.error") - 0.2, pose: "presentarIzq" },
+  { t: cue("F10.param") - 0.1, pose: "explicarIzq" },
   { t: cue("F10.datos") - 0.2, pose: "explicar" },
   { t: cue("F10.ref") - 0.1, pose: "explicarIzq" },
   { t: cue("F11") - 0.2, pose: "senalarIzqArriba" },
   { t: cue("F11.mod") - 0.2, pose: "explicarIzq" },
   { t: cue("F12") - 0.3, pose: "explicar" },
-  { t: cue("F12.temas") - 0.2, pose: "presentarIzq" },
+  { t: cue("F12.temas") - 0.2, pose: "explicarIzq" },
   { t: cue("F12.obs") - 0.1, pose: "explicar" },
   { t: cue("F12.fin") - 0.4, pose: "saludarIzq", dur: 0.5 },
 ];

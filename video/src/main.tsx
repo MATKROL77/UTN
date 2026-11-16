@@ -7,6 +7,7 @@ import { flushSync } from "react-dom";
 import { Video } from "./Video";
 import { Player } from "./player";
 import { esperarPendientes, hayDrivers, macrotarea, syncDrivers } from "./core/drivers";
+import { precargasListas } from "./core/precarga";
 import { DUR, FPS, FRAMES } from "./core/tl";
 
 declare global {
@@ -26,6 +27,7 @@ window.__listo = (async () => {
   await document.fonts.ready;
   await Promise.all([...document.fonts].map((f) => f.load().catch(() => undefined)));
   await document.fonts.ready;
+  await precargasListas();
 })();
 window.__info = { fps: FPS, frames: FRAMES, duracion: DUR };
 
