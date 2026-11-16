@@ -42,7 +42,7 @@ function Capitulo({ t }: { t: number }) {
   if (e.id === "intro" || e.id === "final") return null;
   const p = Math.min(prog(t, e.ini + 0.25, 0.5, E.out), 1 - prog(t, (ESCENAS[i + 1]?.ini ?? DUR) - 0.3, 0.3));
   return (
-    <div className="abs" style={{ left: 64, top: 40, opacity: p, transform: `translateX(${(1 - p) * -14}px)`, display: "flex", alignItems: "center", gap: 14, fontFamily: FONT, whiteSpace: "nowrap" }}>
+    <div className="abs" style={{ left: 64, top: 30, opacity: p, transform: `translateX(${(1 - p) * -14}px)`, display: "flex", alignItems: "center", gap: 14, fontFamily: FONT, whiteSpace: "nowrap" }}>
       <span style={{ fontFamily: MONO, fontSize: 17, color: C.cyan, fontWeight: 600, padding: "5px 10px", borderRadius: 8, background: "rgba(110,223,232,.09)", border: "1px solid rgba(110,223,232,.3)" }}>
         {String(i).padStart(2, "0")}
       </span>

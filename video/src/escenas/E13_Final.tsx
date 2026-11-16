@@ -26,14 +26,14 @@ export function Final({ t, ini, fin }: { t: number; ini: number; fin: number }) 
   const mod = 13, borde = 4 * mod, lado = N * mod + 2 * borde;
   return (
     <Escena t={t} ini={ini} fin={fin + 2} dIn={0.8} dOut={0.01}>
-      <Lienzo style={{ opacity: 0.42 }}>
+      <Lienzo style={{ opacity: 0.62 }}>
         <Trazo d={pathOrbita(B, m)} p={prog(t, ini, 2.2)} color={C.blue} w={2} o={0.45} />
         <Trazo d={pathOrbita(A, m)} p={prog(t, ini, 1.8)} color={C.orbit} w={2.6} />
         <Foco x={m.ox} y={m.oy} r={12} t={t} />
-        <Cuerpo x={m.X(b.x)} y={m.Y(b.y)} r={6} o={0.8} />
-        <Cuerpo x={m.X(a.x)} y={m.Y(a.y)} r={8} />
+        <Cuerpo x={m.X(b.x)} y={m.Y(b.y)} r={8} o={0.85} />
+        <Cuerpo x={m.X(a.x)} y={m.Y(a.y)} r={11} />
       </Lienzo>
-      <div className="abs" style={{ left: 120, top: 196, width: 1120, fontFamily: FONT }}>
+      <div className="abs" style={{ left: 120, top: 262, width: 1120, fontFamily: FONT }}>
         <div style={{ ...sube(0.25), fontSize: 50, fontWeight: 600, letterSpacing: lerp(16, 7, s(0.25, 1.2)), color: C.text, whiteSpace: "nowrap" }}>MOVIMIENTO PLANO Y</div>
         <div style={{ ...sube(0.4), display: "inline-block", fontSize: 90, fontWeight: 800, letterSpacing: 0.5, lineHeight: 1.14, whiteSpace: "nowrap", background: `linear-gradient(90deg, #9ff0f5, ${C.cyan} 35%, ${C.blue})`, WebkitBackgroundClip: "text", color: "transparent", filter: "drop-shadow(0 0 16px rgba(110,223,232,.3))" }}>ÓRBITAS KEPLERIANAS</div>
         <div style={{ ...sube(0.65), marginTop: 14, fontSize: 34, color: "#b9c8dc", letterSpacing: 1.2 }}>
@@ -57,8 +57,8 @@ export function Final({ t, ini, fin }: { t: number; ini: number; fin: number }) 
           <span style={{ fontFamily: MONO, fontSize: 35, color: "#eaf2fb", fontWeight: 500, whiteSpace: "nowrap" }}>{URL_PAGINA}</span>
         </div>
       </div>
-      <div className="abs" style={{ left: 1270, top: 214, width: lado + 56, ...sube(0.9), fontFamily: FONT, textAlign: "center" }}>
-        <div style={{ padding: 28, borderRadius: 30, background: "linear-gradient(180deg, rgba(17,29,47,.96), rgba(11,19,34,.96))", border: `1.5px solid ${C.border2}`, boxShadow: "0 30px 80px rgba(0,0,0,.5), 0 0 60px rgba(110,223,232,.12)" }}>
+      <div className="abs" style={{ left: 1270, top: 218, width: lado + 56, ...sube(0.9), fontFamily: FONT, textAlign: "center" }}>
+        <div style={{ padding: 28, borderRadius: 30, background: "linear-gradient(180deg, rgba(17,29,47,.96), rgba(11,19,34,.96))", border: `1.5px solid ${C.border2}`, boxShadow: `0 30px 80px rgba(0,0,0,.5), 0 0 ${60 + 30 * Math.sin(t * 1.6)}px rgba(110,223,232,${(0.16 + 0.1 * Math.sin(t * 1.6)).toFixed(3)})` }}>
           <svg width={lado} height={lado} viewBox={`0 0 ${lado} ${lado}`} shapeRendering="crispEdges" style={{ display: "block", borderRadius: 14 }}>
             <rect width={lado} height={lado} fill="#ffffff" />
             {MODULOS.map(([x, y]) => <rect key={`${x}-${y}`} x={borde + x * mod} y={borde + y * mod} width={mod} height={mod} fill="#101a30" />)}

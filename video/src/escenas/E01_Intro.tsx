@@ -24,12 +24,12 @@ export function Intro({ t, ini, fin }: { t: number; ini: number; fin: number }) 
   const proy = prog(t, cue("M1.proyecto") - 0.2, 0.6, E.out);
   const tituloO = (1 - prog(t, fin - 1.4, 0.7)) * 1;
   return (
-    <Escena t={t} ini={ini} fin={fin} dIn={0.01} dOut={0.6} zoom={false}>
+    <Escena t={t} ini={ini - 1} fin={fin} dIn={0.01} dOut={0.6} zoom={false}>
       <div className="full" style={{ transform: `scale(${esc.toFixed(4)})`, transformOrigin: `${m.ox}px ${m.oy}px`, opacity: 1 - zoom * 0.25 }}>
         <Lienzo>
           <Trazo d={pathOrbita(B, m)} p={prog(t, 0.7, 2.4)} color={C.blue} w={2} o={0.38} />
           <Trazo d={pathOrbita(A, m)} p={prog(t, 0.15, 2.2)} color={C.orbit} w={3.2} brillo />
-          <Foco x={m.ox} y={m.oy} r={15 * prog(t, 0, 0.9, E.outBack)} t={t} />
+          <Foco x={m.ox} y={m.oy} r={15 * (0.55 + 0.45 * prog(t, 0, 0.9, E.outBack))} t={t} />
           <Cuerpo x={m.X(b.x)} y={m.Y(b.y)} r={7} o={prog(t, 2.6, 0.7) * 0.75} />
           <Cuerpo x={m.X(a.x)} y={m.Y(a.y)} r={10} o={prog(t, 1.5, 0.7)} />
         </Lienzo>

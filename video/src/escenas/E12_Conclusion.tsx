@@ -5,7 +5,7 @@ import { TAU, mapa, orbitalPoint, pathOrbita, pathSector, rad, trueAnomaly, type
 import { C, FONT } from "../core/theme";
 import { T_FINAL, cue } from "../core/tl";
 import { T_CONCL_APP } from "../tiempos";
-import { AppWindow, recorteEn, type Toma } from "../components/AppWindow";
+import { AppWindow, empujar, recorteEn, type Toma } from "../components/AppWindow";
 import { Cuerpo, Flecha, Foco } from "../components/Plano";
 import { Antetitulo, Caja, Chip } from "../components/ui";
 import { Escena } from "./comun";
@@ -67,7 +67,7 @@ export function Conclusion({ t, ini, fin }: { t: number; ini: number; fin: numbe
   return (
     <Escena t={t} ini={ini} fin={fin} dOut={0.5}>
       {win > 0 && (
-        <AppWindow t={t} toma={toma} rect={VENTANA} recorte={recorte} opacidad={win * cierre} cursor={u < 0.05}
+        <AppWindow t={t} toma={toma} rect={VENTANA} recorte={empujar(recorte, 1 + 0.03 * prog(t, T_CONCL_APP, tM - T_CONCL_APP, E.lin))} opacidad={win * cierre} cursor={u < 0.05}
           style={{ transform: `translate(${dx}px, ${dy + (1 - win) * 40}px) scale(${k})`, transformOrigin: "0 0", borderRadius: lerp(18, 40, u) }} />
       )}
       <div style={{ opacity: cierre }}>
@@ -104,10 +104,10 @@ export function Conclusion({ t, ini, fin }: { t: number; ini: number; fin: numbe
         <Caja x={960} y={66} p={prog(t, tM + 0.5, 0.6, E.out)} centro style={{ textAlign: "center" }}>
           <Antetitulo tam={19}>Conclusión</Antetitulo>
         </Caja>
-        <div className="abs" style={{ left: 560, top: 800, width: 800, display: "flex", gap: 12, justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
+        <div className="abs" style={{ left: 610, top: 802, width: 700, display: "flex", gap: 10, justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
           {temas.map((s, i) => {
             const q = prog(t, c("F12.temas") - 0.2 + i * 0.16, 0.5, E.outBack);
-            return <span key={s} style={{ opacity: clamp(q * 1.4), transform: `translateY(${(1 - q) * 14}px)` }}><Chip color={[C.cyan, C.orange, C.blue, C.violetSoft][i]} tam={23}>{s}</Chip></span>;
+            return <span key={s} style={{ opacity: clamp(q * 1.4), transform: `translateY(${(1 - q) * 14}px)` }}><Chip color={[C.cyan, C.orange, C.blue, C.violetSoft][i]} tam={21}>{s}</Chip></span>;
           })}
         </div>
         <Caja x={960} y={898} p={prog(t, c("F12.obs") - 0.2, 0.7, E.out)} centro style={{ textAlign: "center", whiteSpace: "nowrap" }}>

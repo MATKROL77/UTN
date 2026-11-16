@@ -33,7 +33,7 @@ const lugarMati: Lugar[] = [
   { t: T.coordsApp - 0.1, ...MATI_ESQ },
   { t: cue("M8") - 0.5, ...MATI_IZQ },
   { t: cue("M10.fin") - 0.1, x: fuera.izq, y: 706, s: 1, dur: 1.1 },
-  { t: cue("F12") - 0.6, x: 262, y: 720, s: 0.96, dur: 1.0 },
+  { t: cue("F12") - 0.6, x: 236, y: 720, s: 0.96, dur: 1.0 },
   { t: T_FINAL - 0.5, x: fuera.izq, y: 720, s: 0.96, dur: 0.9 },
 ];
 const lugarFeli: Lugar[] = [
@@ -46,7 +46,7 @@ const lugarFeli: Lugar[] = [
   { t: T.campoApp - 0.1, ...FELI_ESQ },
   { t: cue("F9") - 0.5, ...FELI_DER },
   { t: T_CONCL_APP - 0.1, ...FELI_ESQ },
-  { t: cue("F12") - 0.6, x: 1660, y: 720, s: 0.96, dur: 1.0 },
+  { t: cue("F12") - 0.6, x: 1686, y: 720, s: 0.96, dur: 1.0 },
   { t: T_FINAL - 0.5, x: fuera.der, y: 720, s: 0.96, dur: 0.9 },
 ];
 

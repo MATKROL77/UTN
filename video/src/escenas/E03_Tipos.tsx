@@ -4,7 +4,7 @@ import { mapa, pathOrbita } from "../core/orbit";
 import { C, FONT, MONO } from "../core/theme";
 import { cue } from "../core/tl";
 import { T } from "../tiempos";
-import { AppWindow, type Toma } from "../components/AppWindow";
+import { AppWindow, empujar, type Toma } from "../components/AppWindow";
 import { Antetitulo, Caja } from "../components/ui";
 import { Escena } from "./comun";
 
@@ -55,7 +55,7 @@ export function Tipos({ t, ini, fin }: { t: number; ini: number; fin: number }) 
         <Antetitulo tam={20}>La excentricidad decide la forma</Antetitulo>
       </Caja>
       {win > 0 && (
-        <AppWindow t={t} toma={toma} rect={rect} recorte={{ x: 49, y: 340, w: 1342, h: 735 }} opacidad={win}
+        <AppWindow t={t} toma={toma} rect={rect} recorte={empujar({ x: 49, y: 340, w: 1342, h: 735 }, 1 + 0.04 * prog(t, tSim, fin - tSim, E.lin))} opacidad={win}
           leer={{ e: 'input[aria-label="Excentricidad"]', conica: ".conic-badge" }}>
           {(api) => {
             const e = Number(api.metricas.textos.e ?? "0.6");

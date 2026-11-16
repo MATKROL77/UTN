@@ -50,7 +50,7 @@ export function Player() {
       for (const q of ["M", "F"] as const) {
         const a = audios.current[q];
         if (!a) continue;
-        const local = tRef.current - VOCES[q].desfase;
+        const local = tRef.current - VOCES[q].desfase + ((VOCES[q] as { recorteInicio?: number }).recorteInicio ?? 0);
         if (reproducir && local >= 0 && local < a.duration) {
           if (Math.abs(a.currentTime - local) > 0.12) a.currentTime = local;
           if (a.paused) void a.play().catch(() => undefined);

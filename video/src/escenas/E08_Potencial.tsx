@@ -4,7 +4,7 @@ import { DEFAULT_ORBIT, camaraWeb, mapa, potential, rad } from "../core/orbit";
 import { C, FONT, MONO } from "../core/theme";
 import { cue } from "../core/tl";
 import { T } from "../tiempos";
-import { AppWindow, recorteEn, type AppAPI, type Recorte, type Toma } from "../components/AppWindow";
+import { AppWindow, empujar, recorteEn, type AppAPI, type Recorte, type Toma } from "../components/AppWindow";
 import { Flecha, Foco, Lienzo, Rotulo } from "../components/Plano";
 import { Tex } from "../components/Tex";
 import { Antetitulo, Caja, Chip } from "../components/ui";
@@ -41,7 +41,7 @@ function Propia({ t, ini }: { t: number; ini: number }) {
         {NIVELES.map((R, i) => (
           <g key={R} opacity={curvas(i)}>
             <circle cx={m.ox} cy={m.oy} r={R * m.s * (0.86 + 0.14 * curvas(i))} fill="none" stroke="#46c4df" strokeWidth={2.2} opacity={0.85 - i * 0.12} />
-            <Rotulo x={m.ox + R * m.s * 0.707 + 8} y={m.oy - R * m.s * 0.707 - 6} color="#7dd3df" size={21} anchor="start" mono peso={500}>U = {fmt(-1 / R)}</Rotulo>
+            <Rotulo x={m.ox - R * m.s * 0.766 - 8} y={m.oy - R * m.s * 0.643 - 6} color="#7dd3df" size={21} anchor="end" mono peso={500}>U = {fmt(-1 / R)}</Rotulo>
           </g>
         ))}
         {/* distancia al foco */}
@@ -101,13 +101,31 @@ function Propia({ t, ini }: { t: number; ini: number }) {
 const R_TABS: Recorte = { x: 49, y: 262, w: 1342, h: 762 };
 const R_POT: Recorte = { x: 49, y: 356, w: 1342, h: 762 };
 const R_SONDA: Recorte = { x: 380, y: 412, w: 1012, h: 574 };
-const SONDAS = [1, 2.5, 5].map((R) => ({ R, x: R * Math.cos(rad(18)), y: R * Math.sin(rad(18)) }));
+// La web convierte cada clic (en píxeles enteros) a coordenadas del plano. Para que los puntos de prueba caigan
+// casi exactamente en R = 1; 2,5 y 5 se elige, cerca de 18°, el píxel cuyo radio resultante es el más próximo.
+const CAM = camaraWeb(DEFAULT_ORBIT);
+const CTM_NOMINAL = { a: 1.087719298245614, e: 80.5263157894737, f: 411.59375 };
+type CTM = { a: number; e: number; f: number };
+/** Punto que la web evalúa realmente al hacer clic apuntando a (x, y). */
+function puntoReal(x: number, y: number, m: CTM, centro = 0) {
+  const px = Math.floor(m.a * CAM.X(x) + m.e) + centro, py = Math.floor(m.a * CAM.Y(y) + m.f) + centro;
+  return { x: CAM.cx + ((px - m.e) / m.a - CAM.W / 2) / CAM.scale, y: CAM.cy - ((py - m.f) / m.a - CAM.H / 2) / CAM.scale };
+}
+const SONDAS = [1, 2.5, 5].map((R) => {
+  let mejor = { x: R, y: 0 }, err = Infinity;
+  for (let g = 12; g <= 26; g += 0.02) {
+    const q = puntoReal(R * Math.cos(rad(g)), R * Math.sin(rad(g)), CTM_NOMINAL);
+    const e = Math.abs(Math.hypot(q.x, q.y) - R);
+    if (e < err) { err = e; mejor = puntoReal(R * Math.cos(rad(g)), R * Math.sin(rad(g)), CTM_NOMINAL, 0.3); }
+  }
+  return { R, ...mejor };
+});
 
 function Web({ t, fin }: { t: number; fin: number }) {
   const c = (id: string) => cue(id);
   const win = prog(t, T.campoApp + 0.1, 0.7, E.out);
   if (win <= 0) return null;
-  const cam = camaraWeb(DEFAULT_ORBIT);
+  const cam = CAM;
   const tP = c("F7.pag");
   const tAmbas = c("F7.flechas") + 0.62 * (c("F7.fin") - c("F7.flechas"));
   const tS = [c("F8.lejos") + 0.1, (c("F8.lejos") + c("F8.cero")) / 2 + 0.3, c("F8.cero") + 0.45];
@@ -128,14 +146,14 @@ function Web({ t, fin }: { t: number; fin: number }) {
     { t: tP + 0.9, r: R_POT, dur: 0.9 },
     { t: c("F8") - 0.2, r: R_SONDA, dur: 1.0 },
   ]);
-  const rect = { x: 40 - (1 - win) * 80, y: 64, w: 1480, h: 886 };
+  const rect = { x: 40 - (1 - win) * 80, y: 78, w: 1480, h: 878 };
   const nivel = inOut(t, c("F7.nivel") + 0.1, c("F7.flechas") - 0.3, 0.5, 0.4);
   const flech = inOut(t, c("F7.flechas") + 0.3, tAmbas - 0.1, 0.5, 0.4);
   const perp = inOut(t, tAmbas + 0.2, c("F8") - 0.2, 0.5, 0.4);
   const inten = prog(t, c("F8.int") - 0.2, 0.6, E.out) * (1 - prog(t, c("F8.foco") - 0.3, 0.4));
   const foco = prog(t, c("F8.foco") + 0.3, 0.5, E.out);
   return (
-    <AppWindow t={t} toma={toma} rect={rect} recorte={recorte} opacidad={win} leer={{ u: ".probe-card strong" }} medir={[".probe-card"]}>
+    <AppWindow t={t} toma={toma} rect={rect} recorte={empujar(recorte, 1 + 0.03 * prog(t, T.campoApp, fin - T.campoApp, E.lin))} opacidad={win} leer={{ u: ".probe-card strong" }} medir={[".probe-card"]}>
       {(api: AppAPI) => {
         const P = (x: number, y: number) => api.plotAEscena(cam.X(x), cam.Y(y));
         const F = P(0, 0);
@@ -190,14 +208,17 @@ function Web({ t, fin }: { t: number; fin: number }) {
             })}
             <Caja x={rect.x + 30} y={rect.y + 76} p={prog(t, tS[0] - 0.2, 0.5, E.out) * (1 - foco) * win} dy={10}>
               <div style={{ fontFamily: MONO, fontSize: 27, color: "#fff", padding: "14px 20px", borderRadius: 14, background: "rgba(8,15,29,.95)", border: `2px solid ${C.cyan}`, boxShadow: "0 16px 44px rgba(0,0,0,.5)" }}>
-                <div style={{ display: "grid", gridTemplateColumns: `34px 118px 150px ${inten > 0.01 ? "190px" : "0px"}`, columnGap: 14, rowGap: 9, alignItems: "center", whiteSpace: "nowrap" }}>
+                <div style={{ display: "grid", gridTemplateColumns: `34px 132px 150px ${inten > 0.01 ? "190px" : "0px"}`, columnGap: 14, rowGap: 9, alignItems: "center", whiteSpace: "nowrap" }}>
                   <span /><span style={{ color: C.muted, fontSize: 21 }}>distancia</span><span style={{ color: C.cyan, fontSize: 21 }}>potencial U</span>
                   <span style={{ color: C.orangeSoft, fontSize: 21, opacity: inten, overflow: "hidden" }}>intensidad μ/R²</span>
-                  {SONDAS.map((s, i) => {
+                  {SONDAS.map((s0, i) => {
                     const ap = prog(t, tS[i] + 0.1, 0.4, E.out);
+                    const pl = api.metricas.plot;
+                    const pr = pl ? puntoReal(s0.x, s0.y, pl) : s0; // lo que la web calcula de verdad
+                    const s = { x: pr.x, y: pr.y, R: Math.hypot(pr.x, pr.y) };
                     return [
                       <span key={`n${i}`} style={{ opacity: ap, width: 28, height: 28, borderRadius: 14, background: C.cyan, color: "#06121c", fontFamily: FONT, fontWeight: 800, fontSize: 19, textAlign: "center", lineHeight: "28px" }}>{i + 1}</span>,
-                      <span key={`r${i}`} style={{ opacity: ap }}>R = {fmt(s.R, 1)}</span>,
+                      <span key={`r${i}`} style={{ opacity: ap }}>R = {fmt(s.R, 2)}</span>,
                       <span key={`u${i}`} style={{ opacity: ap, color: C.cyan, fontWeight: 700 }}>{fmt(potential(s.x, s.y)!, 2)}</span>,
                       <span key={`g${i}`} style={{ opacity: ap * inten, color: C.orangeSoft, fontWeight: 700, overflow: "hidden" }}>{fmt(1 / (s.R * s.R), 2)}</span>,
                     ];
@@ -209,7 +230,7 @@ function Web({ t, fin }: { t: number; fin: number }) {
                 </div>
               </div>
             </Caja>
-            <Caja x={rect.x + 30} y={rect.y + 348} p={inten * win} dy={10}>
+            <Caja x={rect.x + 30} y={rect.y + rect.h - 118} p={inten * win} dy={10}>
               <div style={{ fontFamily: FONT, fontSize: 21, color: C.muted, padding: "10px 16px", borderRadius: 12, background: "rgba(8,15,29,.95)", border: `1.5px solid ${C.orange}`, lineHeight: 1.4, whiteSpace: "nowrap" }}>
                 <b style={{ color: C.orangeSoft }}>Flechas naranjas:</b> largo ∝ intensidad.<br />Las de la web tienen largo fijo: solo indican dirección.
               </div>

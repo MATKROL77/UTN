@@ -1,0 +1,12 @@
+Copiar acá las dos grabaciones, con estos nombres exactos:
+
+    voz_matias.wav     (Matías lee su parte completa, de corrido)
+    voz_felipe.wav     (Felipe lee su parte completa, de corrido)
+
+También sirven .m4a o .mp3 con el mismo nombre. Después, desde la carpeta video/:
+
+    npm run render
+
+Eso alinea las escenas con cada frase, mezcla las voces sin modificarlas y genera el MP4 final.
+Consejo de grabación: dejar una pausa clara (medio segundo o más) al terminar cada frase y un poco más
+al terminar cada párrafo; el alineador se guía por esas pausas.

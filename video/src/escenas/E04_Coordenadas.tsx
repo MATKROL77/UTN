@@ -4,7 +4,7 @@ import { TAU, arcoOrbita, mapa, orbitalPoint, pathArco, pathDe, pathOrbita, rad,
 import { C, FONT, MONO } from "../core/theme";
 import { cue } from "../core/tl";
 import { T } from "../tiempos";
-import { AppWindow, type Toma } from "../components/AppWindow";
+import { AppWindow, empujar, type Toma } from "../components/AppWindow";
 import { Cuerpo, Ejes, Flecha, Foco, Lienzo, Rejilla, Rotulo, Trazo } from "../components/Plano";
 import { Tex } from "../components/Tex";
 import { Caja, Tarjeta } from "../components/ui";
@@ -143,7 +143,7 @@ export function Coordenadas({ t, ini, fin }: { t: number; ini: number; fin: numb
 
       {/* Web real: rotación y traslación con los deslizadores */}
       {win > 0 && (
-        <AppWindow t={t} toma={toma} rect={rect} recorte={{ x: 49, y: 340, w: 1342, h: 735 }} opacidad={win}
+        <AppWindow t={t} toma={toma} rect={rect} recorte={empujar({ x: 49, y: 340, w: 1342, h: 735 }, 1 + 0.035 * prog(t, tApp, fin - tApp, E.lin))} opacidad={win}
           leer={{ p: 'input[aria-label="Parámetro orbital"]', e: 'input[aria-label="Excentricidad"]', a: 'input[aria-label="Rotación"]', h: 'input[aria-label="Horizontal"]', k: 'input[aria-label="Vertical"]' }}
           medir={["label.switch-row", ".preset-grid"]}>
           {(api) => {

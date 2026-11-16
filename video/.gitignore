@@ -4,3 +4,4 @@ public/app/
 .cache/
 out/
 *.tsbuildinfo
+*_tramo*

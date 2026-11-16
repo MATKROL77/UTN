@@ -23,6 +23,8 @@ export type Accion =
 
 export type Toma = { id: string; inicio: number; fin: number; acciones: Accion[] };
 export type Recorte = { x: number; y: number; w: number; h: number };
+/** Acerca la cámara: k > 1 reduce el encuadre alrededor de su centro (empuje lento para dar vida a la toma). */
+export const empujar = (r: Recorte, k: number): Recorte => ({ x: r.x + (r.w - r.w / k) / 2, y: r.y + (r.h - r.h / k) / 2, w: r.w / k, h: r.h / k });
 export type ClaveRecorte = { t: number; r: Recorte; dur?: number };
 /** Cámara sobre la web: cada clave empieza en su t y tarda `dur` segundos en llegar al nuevo encuadre. */
 export function recorteEn(t: number, claves: ClaveRecorte[]): Recorte {
@@ -63,6 +65,8 @@ class AppDriver implements Driver {
   private rafId = 0;
   private ultimoTick = -1;
   private pausado = new Set<number>();
+  private mutaciones = 0;
+  private ultimoFrame: number | null = null;
   medir: string[] = [];
   leer: Record<string, string> = {};
 
@@ -84,6 +88,7 @@ class AppDriver implements Driver {
     this.cola.clear();
     this.pausado.clear();
     this.ultimoTick = -1;
+    this.ultimoFrame = null;
     this.metricas.clics = [];
     this.metricas.listo = false;
     return new Promise<void>((resolve) => {
@@ -100,6 +105,7 @@ class AppDriver implements Driver {
         st.textContent = "*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}html{scrollbar-width:none;overflow:hidden}::-webkit-scrollbar{display:none}";
         d.head.appendChild(st);
         for (let i = 0; i < 400 && !d.querySelector(".workspace"); i++) await new Promise((r) => setTimeout(r, 10));
+        new (w as Window & typeof globalThis).MutationObserver(() => void this.mutaciones++).observe(d.body, { subtree: true, childList: true, attributes: true, characterData: true });
         await (d as Document).fonts?.ready;
         this.metricas.listo = true;
         resolve();
@@ -182,25 +188,70 @@ class AppDriver implements Driver {
     }
   }
 
-  private async asentar(n = 3) {
-    for (let i = 0; i < n; i++) await macrotarea(this.win);
+  /** Espera a que la web termine de redibujar: vueltas de MessageChannel (la misma cola que usa React)
+   *  hasta que no haya más cambios en el DOM. */
+  private async asentar(min = 2) {
+    const vuelta = () => new Promise<void>((r) => {
+      const ch = new this.win.MessageChannel();
+      ch.port1.onmessage = () => r();
+      ch.port2.postMessage(0);
+    });
+    for (let i = 0, quieto = 0; i < 40 && quieto < min; i++) {
+      const antes = this.mutaciones;
+      await vuelta();
+      await macrotarea(this.win);
+      quieto = this.mutaciones === antes ? quieto + 1 : 0;
+    }
   }
 
-  private tick(hastaFrame: number) {
+  /** Avanza el reloj virtual cuadro por cuadro. Entre un cuadro y el siguiente la web debe terminar de
+   *  redibujar (como ocurre en un navegador real): su animación depende de ese orden, y así el resultado es
+   *  idéntico tanto si se llega en secuencia como si se empieza en mitad de la toma. */
+  private async tick(hastaFrame: number) {
     for (let f = this.ultimoTick + 1; f <= hastaFrame; f++) {
       const cbs = [...this.cola.values()];
       this.cola.clear();
       const ms = (f * 1000) / FPS;
       for (const cb of cbs) cb(ms);
+      this.ultimoTick = f;
+      await this.asentar();
     }
-    this.ultimoTick = Math.max(this.ultimoTick, hastaFrame);
   }
 
   async sync(t: number) {
     if (!this.iframe) return;
     await this.carga;
     if (t < this.ultimoT - 1e-6) await this.recargar();
+    // En tomas con la animación de la web en marcha, el estado depende de la historia cuadro a cuadro
+    // (cada clic o arrastre provoca un redibujado que influye en el avance). Por eso, si se llega "en frío"
+    // a mitad de la toma, se recorren antes todos los cuadros previos, igual que en una captura continua.
+    if (this.toma.acciones.some((a) => a.tipo === "animar")) {
+      const objetivo = Math.round(t * FPS);
+      let f = this.ultimoFrame === null ? Math.ceil(this.toma.inicio * FPS) : this.ultimoFrame + 1;
+      for (; f < objetivo; f++) await this.paso(f / FPS);
+      this.ultimoFrame = objetivo;
+    }
     this.ultimoT = t;
+    await this.paso(t);
+    this.metricas.plot = this.plotCTM();
+    this.metricas.cursor = this.cursorEn(t);
+    this.metricas.rects = {};
+    for (const sel of this.medir) {
+      const el = this.doc.querySelector(sel);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        this.metricas.rects[sel] = { x: r.left, y: r.top, w: r.width, h: r.height };
+      }
+    }
+    this.metricas.textos = {};
+    for (const [clave, sel] of Object.entries(this.leer)) {
+      const el = this.doc.querySelector(sel);
+      if (el) this.metricas.textos[clave] = el instanceof this.win.HTMLInputElement ? el.value : (el.textContent ?? "").replace(/\s+/g, " ").trim();
+    }
+  }
+
+  /** Aplica a la web todas las acciones que corresponden al instante t. */
+  private async paso(t: number) {
     const acciones = this.toma.acciones;
     for (let i = 0; i < acciones.length; i++) {
       const a = acciones[i];
@@ -226,10 +277,10 @@ class AppDriver implements Driver {
           b.click();
           this.hecho.add(i);
           this.ultimoTick = Math.ceil(a.en * FPS) - 1;
-          for (let k = 0; k < 60 && !this.cola.size; k++) await macrotarea(this.win);
+          for (let k = 0; k < 60 && !this.cola.size; k++) await this.asentar(1);
         }
         if (!this.pausado.has(i)) {
-          this.tick(Math.floor(Math.min(t, a.hasta) * FPS + 1e-6));
+          await this.tick(Math.floor(Math.min(t, a.hasta) * FPS + 1e-6));
           if (t >= a.hasta) {
             await this.asentar();
             try { this.boton("Pausar").click(); } catch { /* ya estaba detenida */ }
@@ -261,24 +312,9 @@ class AppDriver implements Driver {
           break;
         }
       }
-      await this.asentar(2);
+      await this.asentar();
     }
     await this.asentar();
-    this.metricas.plot = this.plotCTM();
-    this.metricas.cursor = this.cursorEn(t);
-    this.metricas.rects = {};
-    for (const sel of this.medir) {
-      const el = this.doc.querySelector(sel);
-      if (el) {
-        const r = el.getBoundingClientRect();
-        this.metricas.rects[sel] = { x: r.left, y: r.top, w: r.width, h: r.height };
-      }
-    }
-    this.metricas.textos = {};
-    for (const [clave, sel] of Object.entries(this.leer)) {
-      const el = this.doc.querySelector(sel);
-      if (el) this.metricas.textos[clave] = el instanceof this.win.HTMLInputElement ? el.value : (el.textContent ?? "").replace(/\s+/g, " ").trim();
-    }
   }
 
   private cursorEn(t: number) {

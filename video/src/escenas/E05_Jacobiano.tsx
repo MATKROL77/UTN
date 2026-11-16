@@ -24,9 +24,11 @@ function Matriz({ t }: { t: number }) {
   const sale = 1 - prog(t, c("M9") - 0.45, 0.45);
   if (sale <= 0) return null;
   const tD = c("M8.deriv"), tDet = c("M8.det"), tR = c("M8.r");
-  const paso = Math.min(0.42, Math.max(0.2, (tDet - tD - 1.6) / 8));
-  const izq = (i: number) => prog(t, tD - 0.1 + i * paso, 0.45, E.out);
-  const der = (i: number) => prog(t, tD + 0.5 + (4 + i) * paso, 0.45, E.out);
+  const tJ = c("M8.jac");
+  const pasoI = Math.min(0.4, Math.max(0.15, (tD - tJ - 0.6) / 4));
+  const paso = Math.min(0.7, Math.max(0.25, (tDet - tD - 0.8) / 4));
+  const izq = (i: number) => prog(t, tJ + 0.15 + i * pasoI, 0.45, E.out); // definición: derivadas parciales
+  const der = (i: number) => prog(t, tD + 0.1 + i * paso, 0.5, E.out); // resultado de derivar
   const res = prog(t, tR - 0.15, 0.6, E.outBack);
   const gres = pulse(t, tR - 0.1, 2.2);
   return (
@@ -41,7 +43,7 @@ function Matriz({ t }: { t: number }) {
           hl={{
             J: { c: C.orange },
             a: { o: izq(0), c: C.violetSoft }, b: { o: izq(1), c: C.violetSoft }, c: { o: izq(2), c: C.violetSoft }, d: { o: izq(3), c: C.violetSoft },
-            eq: { o: prog(t, tD + 0.3 + 3.4 * paso, 0.5) },
+            eq: { o: prog(t, tD - 0.25, 0.5) },
             A: { o: der(0) }, B: { o: der(1) }, Cc: { o: der(2) }, D: { o: der(3) },
           }} />
       </Caja>
@@ -148,7 +150,7 @@ function HaciaKepler({ t }: { t: number }) {
   const a = prog(t, c("M10") + 0.1, 0.7, E.out);
   if (a <= 0) return null;
   const m = mapaKepler(t);
-  const dib = prog(t, c("M10.geo") - 0.5, 1.5);
+  const dib = prog(t, c("M10") + 0.25, Math.max(1.4, c("M10.geo") - c("M10") + 0.4));
   // Celdas polares que llenan el sector azul
   const tA = c("M10.areas") - 0.3, dA = Math.max(1.6, c("M10.kepler") - tA - 0.6);
   const celdas: { d: string; k: number }[] = [];

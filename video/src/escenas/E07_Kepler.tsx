@@ -4,7 +4,7 @@ import { TAU, camaraWeb, deg, orbitalPoint, pathOrbita, pathSector, rad, radius,
 import { C, FONT, MONO } from "../core/theme";
 import { cue } from "../core/tl";
 import { T } from "../tiempos";
-import { AppWindow, recorteEn, type AppAPI, type Recorte, type Toma } from "../components/AppWindow";
+import { AppWindow, empujar, recorteEn, type AppAPI, type Recorte, type Toma } from "../components/AppWindow";
 import { Cuerpo, Foco, Lienzo, Rotulo, Trazo } from "../components/Plano";
 import { Tex } from "../components/Tex";
 import { Antetitulo, Caja, Tarjeta } from "../components/ui";
@@ -146,14 +146,14 @@ function Web({ t, fin }: { t: number; fin: number }) {
     { t: c("F4.areas") - 0.5, r: R_TODO, dur: 1.0 },
     { t: c("F4.radio") - 0.2, r: R_PLOT, dur: 1.0 },
   ]);
-  const rect = { x: 40 - (1 - win) * 80, y: 64, w: 1480, h: 886 };
+  const rect = { x: 40 - (1 - win) * 80, y: 78, w: 1480, h: 878 };
   const cam = camaraWeb(KO);
   const arcos = inOut(t, c("F4.amp") - 0.15, c("F4.radio") - 0.3, 0.5, 0.5);
   const tarj = inOut(t, c("F4.areas") - 0.1, c("F4.radio") - 0.2, 0.5, 0.4);
   const radios = prog(t, c("F4.radio") + 0.2, 0.6, E.out);
   const gMay = pulse(t, c("F4.mayor") - 0.1, 2.0), gMen = pulse(t, c("F4.menor") - 0.1, 2.0);
   return (
-    <AppWindow t={t} toma={toma} rect={rect} recorte={recorte} opacidad={win}
+    <AppWindow t={t} toma={toma} rect={rect} recorte={empujar(recorte, 1 + 0.03 * prog(t, T.keplerApp, fin - T.keplerApp, E.lin))} opacidad={win}
       leer={{ a1: '[data-testid="blue-area"]', a2: '[data-testid="orange-area"]', err: '[data-testid="area-error"]', d2: '[data-testid="orange-angle"]', d1: 'input[aria-label="Amplitud del sector azul"]', e: 'input[aria-label="Excentricidad de la elipse"]' }}
       medir={[".equations-section"]}>
       {(api: AppAPI) => {

@@ -6,9 +6,10 @@
   "description": "Video de presentación del proyecto integrador (Grupo 14). Composición por código: React + Vite, render con Playwright + FFmpeg.",
   "scripts": {
     "app": "node scripts/build-app.mjs",
-    "dev": "node scripts/build-app.mjs --if-missing && vite --host 127.0.0.1 --port 5180",
+    "dev": "node scripts/build-app.mjs --si-falta && node scripts/timeline.mjs --si-falta && vite --host 127.0.0.1 --port 5180",
     "timeline": "node scripts/timeline.mjs",
     "sync": "node scripts/sync-audio.mjs",
+    "prueba-sync": "node scripts/prueba-sync.mjs",
     "still": "node scripts/still.mjs",
     "render": "node scripts/render.mjs",
     "figuras": "python3 python/figuras_kepler.py",
