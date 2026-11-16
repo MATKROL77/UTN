@@ -145,7 +145,7 @@ if (hayVoces && tl.fuente === "audio") {
     audioArgs.push("-i", voces[q]);
     return `[${i + 1}:a]atrim=start=${recorte.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000,adelay=${Math.round(inicio * 1000)}:all=1[v${i}]`;
   });
-  audioMapa.push("-filter_complex", `${filtros.join(";")};[v0][v1]amix=inputs=2:normalize=0:dropout_transition=0,apad[a]`, "-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-shortest");
+  audioMapa.push("-filter_complex", `${filtros.join(";")};[v0][v1]amix=inputs=2:normalize=0:dropout_transition=0,apad[a]`, "-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-ac", "2", "-shortest");
   console.log(`Audio: Matías ${duracionAudio(voces.M).toFixed(1)} s desde ${tl.voces.M.desfase} s · Felipe ${duracionAudio(voces.F).toFixed(1)} s desde ${tl.voces.F.desfase} s`);
 }
 function codificar(destino, conSubs) {
