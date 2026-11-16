@@ -11,7 +11,7 @@ import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { FFMPEG, ROOT, argumentos, buscarAudio, calcularCues, correr, duracionAudio, leerGuion, leerTimeline, subtitulos } from "./lib.mjs";
+import { FFMPEG, ROOT, argumentos, buscarAudio, calcularCues, correr, duracionAudio, leerGuion, leerTimeline, subtitulos, vozParaVideo } from "./lib.mjs";
 import { abrirNavegador, abrirPagina, prepararSitio } from "./servidor.mjs";
 
 const { flags } = argumentos();
@@ -26,7 +26,14 @@ const seg = () => `${((Date.now() - t0) / 1000).toFixed(0)} s`;
 
 // 1) Voces: si están, alinear la línea de tiempo antes de compilar.
 const guion = leerGuion();
-const voces = { M: buscarAudio(guion.hablantes.M.audio), F: buscarAudio(guion.hablantes.F.audio) };
+// Voces: cortes y limpieza (scripts/voces.py). Si Python o sus librerías no están, se usan las grabaciones tal cual.
+if ((buscarAudio(guion.hablantes.M.audio) || buscarAudio(guion.hablantes.F.audio)) && !flags["sin-procesar"]) {
+  const r = spawnSync(process.env.PYTHON || "python3", [path.join(ROOT, "scripts/voces.py")], { stdio: "inherit" });
+  if (r.status !== 0) console.log("⚠ No se pudieron procesar las voces (python3 con numpy, scipy y noisereduce): se usan las grabaciones originales.");
+}
+const vozM = flags["sin-procesar"] ? { archivo: buscarAudio(guion.hablantes.M.audio) } : vozParaVideo(guion.hablantes.M.audio);
+const vozF = flags["sin-procesar"] ? { archivo: buscarAudio(guion.hablantes.F.audio) } : vozParaVideo(guion.hablantes.F.audio);
+const voces = { M: vozM?.archivo ?? null, F: vozF?.archivo ?? null };
 const hayVoces = Boolean(voces.M || voces.F);
 if (hayVoces && !flags["sin-sync"]) correr("node", [path.join(ROOT, "scripts/sync-audio.mjs")]);
 if (hayVoces && !(voces.M && voces.F)) console.log(`ℹ Solo está la voz de ${voces.M ? "Matías" : "Felipe"}: la otra parte queda en silencio, con tiempos estimados.`);
@@ -163,7 +170,20 @@ if (hayVoces && tl.fuente === "audio") {
     const nivel = lufs === null ? "" : `,volume=${ganancia.toFixed(2)}dB,alimiter=limit=0.89:attack=5:release=60:level=false`;
     return `[${i + 1}:a]atrim=start=${recorte.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000${nivel},adelay=${Math.round(inicio * 1000)}:all=1[v${i}]`;
   });
-  const mezcla = presentes.length === 2 ? "[v0][v1]amix=inputs=2:normalize=0:dropout_transition=0,apad[a]" : "[v0]apad[a]";
+  // Música original de fondo (scripts/musica.py): ya viene bajada bajo las voces; acá solo se fija su nivel general.
+  let musica = null;
+  if (!flags["sin-musica"]) {
+    const r = spawnSync(process.env.PYTHON || "python3", [path.join(ROOT, "scripts/musica.py")], { stdio: "inherit" });
+    if (r.status === 0) musica = path.join(ROOT, ".cache/musica.wav");
+    else console.log("⚠ No se pudo generar la música (python3 con numpy y scipy): el video sale solo con las voces.");
+  }
+  const entradas = presentes.map((_, i) => `[v${i}]`);
+  if (musica) {
+    audioArgs.push("-i", musica);
+    filtros.push(`[${presentes.length + 1}:a]atrim=start=${desfaseT.toFixed(3)},asetpts=PTS-STARTPTS,volume=${flags["volumen-musica"] || -7}dB[mu]`);
+    entradas.push("[mu]");
+  }
+  const mezcla = entradas.length > 1 ? `${entradas.join("")}amix=inputs=${entradas.length}:normalize=0:dropout_transition=0,alimiter=limit=0.95:level=false,apad[a]` : "[v0]apad[a]";
   audioMapa.push("-filter_complex", `${filtros.join(";")};${mezcla}`, "-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-ac", "2", "-shortest");
   for (const q of presentes) console.log(`Audio: ${q === "M" ? "Matías" : "Felipe"} ${duracionAudio(voces[q]).toFixed(1)} s, su primera palabra a los ${tl.voces[q].inicioVoz} s (${tl.voces[q].metodo})`);
 }

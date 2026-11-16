@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 export { limpiar, peso, frasesDe, todasLasFrases, calcularCues, subtitulos } from "../guion/cues.js";
 import { frasesDe as _frasesDe, peso as _peso } from "../guion/cues.js";
 
@@ -76,4 +77,21 @@ export function estimarParte(parrafos, inicio, segundos, pausaFrase = 0.5, pausa
     if (i < lista.length - 1) cursor += pausaParrafo;
   });
   return { frases, fin: redondear(cursor) };
+}
+
+/**
+ * Voz lista para el video: .cache/voces/<nombre>.wav (generada por scripts/voces.py con cortes y limpieza),
+ * siempre que corresponda a la grabación actual. Si no existe, devuelve la grabación original.
+ * Resultado: { archivo, preparada, receta } o null si no hay grabación.
+ */
+export function vozParaVideo(nombre) {
+  const original = buscarAudio(nombre);
+  if (!original) return null;
+  const base = path.basename(original).replace(/\.[a-z0-9]+$/i, "");
+  const wav = path.join(ROOT, ".cache/voces", `${base}.wav`), ficha = path.join(ROOT, ".cache/voces", `${base}.json`);
+  if (fs.existsSync(wav) && fs.existsSync(ficha)) {
+    const f = JSON.parse(fs.readFileSync(ficha, "utf8"));
+    if (f.sha1_origen === createHash("sha1").update(fs.readFileSync(original)).digest("hex")) return { archivo: wav, preparada: true, receta: f.receta };
+  }
+  return { archivo: original, preparada: false, receta: null };
 }

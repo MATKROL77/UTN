@@ -17,7 +17,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { FFMPEG, ROOT, buscarAudio, escribirTimeline, estimarParte, frasesDe, leerGuion, leerTimeline, limpiar, redondear } from "./lib.mjs";
+import { FFMPEG, ROOT, escribirTimeline, estimarParte, frasesDe, leerGuion, leerTimeline, limpiar, redondear, vozParaVideo } from "./lib.mjs";
 
 const PASO = 0.01; // 10 ms
 const letras = (texto) => [...limpiar(texto)].filter((ch) => /[\p{L}\p{N}]/u.test(ch)).length;
@@ -40,7 +40,9 @@ export function envolvente(archivo) {
 export function detectarVoz(db) {
   const orden = Float64Array.from(db).sort();
   const piso = orden[Math.floor(orden.length * 0.12)], techo = orden[Math.floor(orden.length * 0.95)];
-  const umbral = piso + Math.max(6, 0.35 * (techo - piso));
+  // El umbral nunca queda a más de 28 dB por debajo de la voz: con audio muy limpio (pausas casi en silencio)
+  // las respiraciones no deben contarse como habla.
+  const umbral = Math.max(piso + Math.max(6, 0.35 * (techo - piso)), techo - 28);
   const voz = Array.from(db, (v) => v > umbral);
   const rellenar = (valor, max) => {
     for (let i = 0; i < voz.length; ) {
@@ -133,18 +135,21 @@ export function frasesDeHablante(guion, quien) {
   });
 }
 
-/** Tiempos por palabra medidos por scripts/alinear_palabras.py (si existen y corresponden al guion actual). */
-function leerPalabras(archivo, guion, quien) {
-  const f = archivo.replace(/\.[a-z0-9]+$/i, ".palabras.json");
+/** Tiempos por palabra medidos por scripts/alinear_palabras.py (audio/<voz>.palabras.json), si corresponden
+ *  al guion actual y a la misma versión de la voz (misma grabación, mismos cortes y misma limpieza). */
+function leerPalabras(voz, guion, quien) {
+  const base = path.basename(voz.archivo).replace(/\.[a-z0-9]+$/i, "");
+  const f = path.join(ROOT, "audio", `${base}.palabras.json`);
   if (!fs.existsSync(f)) return null;
   const datos = JSON.parse(fs.readFileSync(f, "utf8"));
   const guionPalabras = guion.parrafos.filter((p) => p.id.startsWith(quien)).map((p) => limpiar(p.texto)).join(" ").split(/\s+/).filter(Boolean);
   if (datos.palabras.length !== guionPalabras.length || datos.palabras.some((w, i) => w.p !== guionPalabras[i])) {
-    console.log(`  ⚠ ${path.basename(f)} no corresponde al guion actual: se ignora (volvé a ejecutar scripts/alinear_palabras.py).`);
+    console.log(`  ⚠ ${path.basename(f)} no corresponde al guion actual: se ignora (volvé a ejecutar "npm run alinear").`);
     return null;
   }
-  if (datos.sha1 !== createHash("sha1").update(fs.readFileSync(archivo)).digest("hex")) {
-    console.log(`  ⚠ ${path.basename(f)} se midió sobre otra grabación: se ignora (volvé a ejecutar scripts/alinear_palabras.py).`);
+  const mismaVoz = voz.receta ? datos.receta === voz.receta : datos.sha1 === createHash("sha1").update(fs.readFileSync(voz.archivo)).digest("hex");
+  if (!mismaVoz) {
+    console.log(`  ⚠ ${path.basename(f)} se midió sobre otra versión de la voz (cambió la grabación, los cortes o la limpieza): se ignora. Ejecutá "npm run alinear".`);
     return null;
   }
   return datos;
@@ -164,7 +169,11 @@ function afinarConSonido(palabras, archivo) {
     let t = w[k].inicio;
     const trasPausa = k > 0 && /[.,;:]$/.test(w[k - 1].p);
     const dentro = silencios.find((sl) => t >= sl.ini - 0.12 && t < sl.fin);
-    if (dentro) t = dentro.fin;
+    // Tras una pausa, el reconocedor a veces hace empezar la palabra dentro del silencio: se toma el último silencio
+    // que termina antes del final de la palabra (si la palabra todavía suena después).
+    const ultimo = trasPausa ? silencios.filter((sl) => sl.fin > t - 0.5 && sl.fin < w[k].fin - 0.04).pop() : null;
+    if (ultimo && (!dentro || ultimo.fin > dentro.fin)) t = ultimo.fin;
+    else if (dentro) t = dentro.fin;
     else if (trasPausa) {
       const cerca = silencios.filter((sl) => Math.abs(sl.fin - t) <= 0.5).sort((a, b) => Math.abs(a.fin - t) - Math.abs(b.fin - t))[0];
       if (cerca) t = cerca.fin;
@@ -210,7 +219,8 @@ function principal() {
   let cursor = P.entrada, conAudio = 0;
   for (const quien of ["M", "F"]) {
     const nombre = guion.hablantes[quien].nombre;
-    const archivo = buscarAudio(guion.hablantes[quien].audio);
+    const voz = vozParaVideo(guion.hablantes[quien].audio);
+    const archivo = voz?.archivo;
     if (!archivo) {
       // Sin grabación todavía: su parte conserva tiempos estimados y queda en silencio.
       const est = estimarParte(guion.parrafos.filter((p) => p.id.startsWith(quien)), cursor, P.segundosPorParte);
@@ -222,7 +232,7 @@ function principal() {
     }
     conAudio++;
     const lista = frasesDeHablante(guion, quien);
-    const medidas = leerPalabras(archivo, guion, quien);
+    const medidas = leerPalabras(voz, guion, quien);
     const r = medidas ? desdePalabras(medidas, guion, quien, lista, archivo) : alinear(archivo, lista);
     // El archivo se ubica de modo que su primera palabra caiga en `cursor`; si trae más silencio inicial
     // del necesario, se recorta ese silencio (nunca la voz).
@@ -230,7 +240,7 @@ function principal() {
     const aVideo = (t) => redondear(t + desfase - recorteInicio);
     const ritmos = r.frases.map((f, i) => letras(lista[i].texto) / Math.max(0.2, f.fin - f.inicio));
     const mediana = [...ritmos].sort((a, b) => a - b)[Math.floor(ritmos.length / 2)];
-    console.log(`\n${nombre} — ${path.basename(archivo)} · ${medidas ? `alineación palabra por palabra (coincidencia con el guion ${(medidas.coincidencia * 100).toFixed(0)} %)` : `alineación por pausas (${r.pausas} pausas detectadas)`} · ${mediana.toFixed(1)} letras/s`);
+    console.log(`\n${nombre} — ${path.basename(archivo)}${voz.preparada ? " (procesada)" : ""} · ${medidas ? `alineación palabra por palabra (coincidencia con el guion ${(medidas.coincidencia * 100).toFixed(0)} %)` : `alineación por pausas (${r.pausas} pausas detectadas)`} · ${mediana.toFixed(1)} letras/s`);
     r.frases.forEach((f, i) => {
       const raro = ritmos[i] < mediana * 0.62 || ritmos[i] > mediana * 1.6 || f.virtual;
       frases.push({ id: f.id, inicio: aVideo(f.inicio), fin: aVideo(f.fin) });

@@ -1,0 +1,18 @@
+{
+  "_ayuda": "Tramos a quitar de cada grabación (segundos de la grabación ORIGINAL, no del video). Cada corte se une con un fundido corto ('fundido', en segundos). scripts/voces.py aplica los cortes y la limpieza; después hay que volver a alinear (npm run alinear) y renderizar.",
+  "voz_matias": [
+    {
+      "desde": 64.485,
+      "hasta": 66.26,
+      "fundido": 0.04,
+      "nota": "Video 1:08–1:10. Se dijo «utilizando las… ex-… las expresiones»: queda «utilizando» completo y el segundo «las expresiones»."
+    },
+    {
+      "desde": 105.9,
+      "hasta": 107.58,
+      "fundido": 0.03,
+      "nota": "Video 1:49–1:51. Pausa larga y arranque en falso entre «d theta» y «Geométricamente»; queda una pausa natural de 0,6 s."
+    }
+  ],
+  "voz_felipe": []
+}

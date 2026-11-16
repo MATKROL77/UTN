@@ -54,12 +54,23 @@ def decodificar(audio: Path):
 
 
 def buscar_audio(nombre: str):
+    """Devuelve (archivo, receta): la voz procesada por scripts/voces.py si corresponde a la grabación actual;
+    si no, la grabación original (receta None)."""
     base = Path(nombre).stem
+    original = None
     for ext in ("wav", "WAV", "m4a", "mp3", "ogg", "flac", "aac"):
         f = RAIZ / "audio" / f"{base}.{ext}"
         if f.exists():
-            return f
-    return None
+            original = f
+            break
+    if not original:
+        return None, None
+    wav, ficha = RAIZ / ".cache" / "voces" / f"{base}.wav", RAIZ / ".cache" / "voces" / f"{base}.json"
+    if wav.exists() and ficha.exists():
+        datos = json.loads(ficha.read_text(encoding="utf8"))
+        if datos.get("sha1_origen") == hashlib.sha1(original.read_bytes()).hexdigest():
+            return wav, datos.get("receta")
+    return original, None
 
 
 def main():
@@ -70,7 +81,7 @@ def main():
     for quien, datos in guion["hablantes"].items():
         if SOLO and quien != SOLO:
             continue
-        audio = buscar_audio(datos["audio"])
+        audio, receta = buscar_audio(datos["audio"])
         if not audio:
             print(f"– {datos['nombre']}: todavía no hay grabación ({datos['audio']}).")
             continue
@@ -119,10 +130,10 @@ def main():
             for k in range(i, j):
                 tiempos[k] = (antes + (despues - antes) * (k - i) / (j - i), antes + (despues - antes) * (k - i + 1) / (j - i))
         coincidencia = sm.ratio()
-        salida = audio.with_name(audio.stem + ".palabras.json")
+        salida = RAIZ / "audio" / f"{Path(datos['audio']).stem}.palabras.json"
         salida.write_text(json.dumps({
             "_ayuda": "Tiempo (segundos del archivo de audio) de cada palabra del guion, medido con faster-whisper.",
-            "audio": audio.name, "sha1": hashlib.sha1(audio.read_bytes()).hexdigest(), "modelo": MODELO, "coincidencia": round(coincidencia, 4),
+            "audio": audio.name, "receta": receta, "sha1": hashlib.sha1(audio.read_bytes()).hexdigest(), "modelo": MODELO, "coincidencia": round(coincidencia, 4),
             "palabras": [{"p": w, "inicio": round(t[0], 3), "fin": round(t[1], 3)} for w, t in zip(palabras, tiempos)],
         }, ensure_ascii=False, indent=1) + "\n", encoding="utf8")
         print(f"✓ {datos['nombre']}: {len(palabras)} palabras del guion · {len(oidas)} oídas · coincidencia {coincidencia:.1%} · {salida.relative_to(RAIZ)}")
