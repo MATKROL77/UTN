@@ -367,7 +367,8 @@ export function AppWindow({
   children?: (api: AppAPI) => ReactNode; style?: CSSProperties;
 }) {
   const driver = useMemo(() => new AppDriver(toma), [toma.id]);
-  driver.toma = toma;
+  // Las acciones se aplican siempre en orden cronológico, sea cual sea el ritmo de la voz.
+  driver.toma = { ...toma, acciones: [...toma.acciones].sort((a, b) => a.en - b.en) };
   driver.medir = medir ?? [];
   driver.leer = leer ?? {};
   const ref = useRef<HTMLIFrameElement>(null);

@@ -13,9 +13,11 @@
 // Si alguna frase quedara mal ubicada, se corrige a mano en timeline.json ("frases": inicio/fin en segundos de
 // video) o fijando un cue puntual en "cuesManuales"; luego: npm run render -- --sin-sync
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { FFMPEG, ROOT, buscarAudio, escribirTimeline, frasesDe, leerGuion, leerTimeline, limpiar, redondear } from "./lib.mjs";
+import { FFMPEG, ROOT, buscarAudio, escribirTimeline, estimarParte, frasesDe, leerGuion, leerTimeline, limpiar, redondear } from "./lib.mjs";
 
 const PASO = 0.01; // 10 ms
 const letras = (texto) => [...limpiar(texto)].filter((ch) => /[\p{L}\p{N}]/u.test(ch)).length;
@@ -131,34 +133,119 @@ export function frasesDeHablante(guion, quien) {
   });
 }
 
+/** Tiempos por palabra medidos por scripts/alinear_palabras.py (si existen y corresponden al guion actual). */
+function leerPalabras(archivo, guion, quien) {
+  const f = archivo.replace(/\.[a-z0-9]+$/i, ".palabras.json");
+  if (!fs.existsSync(f)) return null;
+  const datos = JSON.parse(fs.readFileSync(f, "utf8"));
+  const guionPalabras = guion.parrafos.filter((p) => p.id.startsWith(quien)).map((p) => limpiar(p.texto)).join(" ").split(/\s+/).filter(Boolean);
+  if (datos.palabras.length !== guionPalabras.length || datos.palabras.some((w, i) => w.p !== guionPalabras[i])) {
+    console.log(`  ⚠ ${path.basename(f)} no corresponde al guion actual: se ignora (volvé a ejecutar scripts/alinear_palabras.py).`);
+    return null;
+  }
+  if (datos.sha1 !== createHash("sha1").update(fs.readFileSync(archivo)).digest("hex")) {
+    console.log(`  ⚠ ${path.basename(f)} se midió sobre otra grabación: se ignora (volvé a ejecutar scripts/alinear_palabras.py).`);
+    return null;
+  }
+  return datos;
+}
+
+/**
+ * Afina los tiempos del reconocedor con el sonido real. El reconocedor acierta qué palabra va en cada lugar,
+ * pero suele adelantar (o atrasar) unas décimas el inicio de la palabra que sigue a una pausa: ese inicio se
+ * lleva al instante exacto en que vuelve la voz, y el final de cada palabra no se extiende dentro del silencio.
+ */
+function afinarConSonido(palabras, archivo) {
+  const { tramos } = detectarVoz(envolvente(archivo));
+  const silencios = [];
+  for (let i = 0; i + 1 < tramos.length; i++) if (tramos[i + 1].ini - tramos[i].fin >= 0.18) silencios.push({ ini: tramos[i].fin, fin: tramos[i + 1].ini });
+  const w = palabras.map((x) => ({ ...x }));
+  for (let k = 0; k < w.length; k++) {
+    let t = w[k].inicio;
+    const trasPausa = k > 0 && /[.,;:]$/.test(w[k - 1].p);
+    const dentro = silencios.find((sl) => t >= sl.ini - 0.12 && t < sl.fin);
+    if (dentro) t = dentro.fin;
+    else if (trasPausa) {
+      const cerca = silencios.filter((sl) => Math.abs(sl.fin - t) <= 0.5).sort((a, b) => Math.abs(a.fin - t) - Math.abs(b.fin - t))[0];
+      if (cerca) t = cerca.fin;
+    }
+    w[k].inicio = k > 0 ? Math.max(t, w[k - 1].inicio + 0.03) : t;
+  }
+  for (let k = 0; k < w.length; k++) {
+    let f = k + 1 < w.length ? Math.min(w[k].fin, w[k + 1].inicio) : w[k].fin;
+    const sl = silencios.find((x) => f > x.ini && f <= x.fin + 1e-6);
+    if (sl) f = sl.ini;
+    w[k].fin = Math.max(f, w[k].inicio + 0.05);
+  }
+  return w;
+}
+
+/** Frases y cues a partir de los tiempos de cada palabra. Tiempos en segundos del archivo de audio. */
+function desdePalabras(datos, guion, quien, lista, archivo) {
+  const w = afinarConSonido(datos.palabras, archivo);
+  const frases = [];
+  let i = 0;
+  for (const f of lista) {
+    const n = limpiar(f.texto).split(/\s+/).filter(Boolean).length;
+    frases.push({ id: f.id, inicio: w[i].inicio, fin: w[i + n - 1].fin, virtual: false });
+    i += n;
+  }
+  const cues = {};
+  let base = 0;
+  for (const p of guion.parrafos.filter((x) => x.id.startsWith(quien))) {
+    for (const m of p.texto.matchAll(/\{\{([^}]+)\}\}/g)) {
+      const antes = limpiar(p.texto.slice(0, m.index)).split(/\s+/).filter(Boolean).length;
+      cues[`${p.id}.${m[1]}`] = w[Math.min(w.length - 1, base + antes)].inicio;
+    }
+    base += limpiar(p.texto).split(/\s+/).filter(Boolean).length;
+  }
+  return { frases, cues, inicio: w[0].inicio, final: w[w.length - 1].fin, palabras: w.map((x) => [x.inicio, x.fin]) };
+}
+
 function principal() {
   const guion = leerGuion();
   const previo = leerTimeline();
-  const P = { entrada: 3.4, pausaRelevo: 1.0, colchonFinal: 1.2, pantallaFinal: 9.0, ...(previo.parametros || {}) };
-  const voces = {}, frases = [];
-  let cursor = P.entrada;
+  const P = { entrada: 3.4, pausaRelevo: 1.0, colchonFinal: 1.2, pantallaFinal: 9.0, segundosPorParte: 150, ...(previo.parametros || {}) };
+  const voces = {}, frases = [], cuesMedidos = {}, palabras = {};
+  let cursor = P.entrada, conAudio = 0;
   for (const quien of ["M", "F"]) {
+    const nombre = guion.hablantes[quien].nombre;
     const archivo = buscarAudio(guion.hablantes[quien].audio);
     if (!archivo) {
-      console.error(`✗ Falta video/audio/${guion.hablantes[quien].audio}. Copiá las dos grabaciones y volvé a ejecutar "npm run sync".`);
-      process.exit(1);
+      // Sin grabación todavía: su parte conserva tiempos estimados y queda en silencio.
+      const est = estimarParte(guion.parrafos.filter((p) => p.id.startsWith(quien)), cursor, P.segundosPorParte);
+      frases.push(...est.frases);
+      voces[quien] = { archivo: null, metodo: "estimacion", desfase: redondear(cursor), recorteInicio: 0, inicioVoz: redondear(cursor), finVoz: est.fin };
+      console.log(`\n${nombre} — sin grabación en audio/: tiempos estimados (${P.segundosPorParte} s), sin sonido.`);
+      cursor = est.fin + P.pausaRelevo;
+      continue;
     }
+    conAudio++;
     const lista = frasesDeHablante(guion, quien);
-    const r = alinear(archivo, lista);
+    const medidas = leerPalabras(archivo, guion, quien);
+    const r = medidas ? desdePalabras(medidas, guion, quien, lista, archivo) : alinear(archivo, lista);
     // El archivo se ubica de modo que su primera palabra caiga en `cursor`; si trae más silencio inicial
     // del necesario, se recorta ese silencio (nunca la voz).
     const desfase = Math.max(0, cursor - r.inicio), recorteInicio = Math.max(0, r.inicio - cursor);
     const aVideo = (t) => redondear(t + desfase - recorteInicio);
     const ritmos = r.frases.map((f, i) => letras(lista[i].texto) / Math.max(0.2, f.fin - f.inicio));
     const mediana = [...ritmos].sort((a, b) => a - b)[Math.floor(ritmos.length / 2)];
-    console.log(`\n${guion.hablantes[quien].nombre} — ${path.basename(archivo)} · ${r.pausas} pausas detectadas · ${mediana.toFixed(1)} letras/s`);
+    console.log(`\n${nombre} — ${path.basename(archivo)} · ${medidas ? `alineación palabra por palabra (coincidencia con el guion ${(medidas.coincidencia * 100).toFixed(0)} %)` : `alineación por pausas (${r.pausas} pausas detectadas)`} · ${mediana.toFixed(1)} letras/s`);
     r.frases.forEach((f, i) => {
       const raro = ritmos[i] < mediana * 0.62 || ritmos[i] > mediana * 1.6 || f.virtual;
       frases.push({ id: f.id, inicio: aVideo(f.inicio), fin: aVideo(f.fin) });
       console.log(`  ${f.id.padEnd(6)} ${aVideo(f.inicio).toFixed(2).padStart(7)} – ${aVideo(f.fin).toFixed(2).padStart(7)} s  ${raro ? "⚠ revisar " : "          "}${limpiar(lista[i].texto).slice(0, 58)}`);
     });
-    voces[quien] = { archivo: path.relative(ROOT, archivo), desfase: redondear(desfase), recorteInicio: redondear(recorteInicio), inicioVoz: aVideo(r.inicio), finVoz: aVideo(r.final) };
+    if (medidas) {
+      for (const [id, t] of Object.entries(r.cues)) cuesMedidos[id] = aVideo(t);
+      palabras[quien] = r.palabras.map(([a, b]) => [aVideo(a), aVideo(b)]);
+    }
+    voces[quien] = { archivo: path.relative(ROOT, archivo), metodo: medidas ? "palabras" : "pausas", desfase: redondear(desfase), recorteInicio: redondear(recorteInicio), inicioVoz: aVideo(r.inicio), finVoz: aVideo(r.final) };
     cursor = aVideo(r.final) + P.pausaRelevo;
+  }
+  if (!conAudio) {
+    console.error(`✗ No hay grabaciones en video/audio/. Copiá voz_matias.wav y/o voz_felipe.wav y volvé a ejecutar "npm run sync".`);
+    process.exit(1);
   }
   const finVoz = voces.F.finVoz;
   escribirTimeline({
@@ -168,12 +255,14 @@ function principal() {
     parametros: P,
     voces,
     frases,
+    cuesMedidos,
     cuesManuales: previo.fuente === "audio" ? previo.cuesManuales || {} : {},
+    palabras,
     inicioPantallaFinal: redondear(finVoz + P.colchonFinal),
     duracion: redondear(finVoz + P.colchonFinal + P.pantallaFinal),
   });
   const total = finVoz + P.colchonFinal + P.pantallaFinal;
-  console.log(`\n✓ timeline.json actualizado con las voces: duración total ${Math.floor(total / 60)}:${(total % 60).toFixed(1).padStart(4, "0")}`);
+  console.log(`\n✓ timeline.json actualizado con ${conAudio === 2 ? "las dos voces" : "la voz disponible"}: duración total ${Math.floor(total / 60)}:${(total % 60).toFixed(1).padStart(4, "0")}`);
   console.log(`  Revisá la sincronía con "npm run dev" (vista previa con audio) y luego "npm run render".`);
 }
 

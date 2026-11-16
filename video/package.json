@@ -13,7 +13,8 @@
     "still": "node scripts/still.mjs",
     "render": "node scripts/render.mjs",
     "figuras": "python3 python/figuras_kepler.py",
-    "check": "tsc --noEmit && node scripts/check-guion.mjs"
+    "check": "tsc --noEmit && node scripts/check-guion.mjs",
+    "alinear": "python3 scripts/alinear_palabras.py"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.5",

@@ -5,3 +5,12 @@ public/app/
 out/
 *.tsbuildinfo
 *_tramo*
+# Voces: son grabaciones personales y el repositorio es público. Quitar estas líneas solo si se quiere subirlas.
+audio/*.wav
+audio/*.WAV
+audio/*.m4a
+audio/*.mp3
+audio/*.ogg
+audio/*.flac
+audio/*.aac
+*_con_voz*

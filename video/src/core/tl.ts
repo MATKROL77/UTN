@@ -18,7 +18,8 @@ export const T_FINAL: number = timeline.inicioPantallaFinal;
 export const FUENTE: string = timeline.fuente;
 export const VOCES = timeline.voces as Record<"M" | "F", { archivo: string | null; desfase: number; inicioVoz: number; finVoz: number }>;
 export const FRASES = datos.frases;
-export const SUBS = subtitulos(datos.frases) as { parrafo: string; texto: string; inicio: number; fin: number }[];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const SUBS = (subtitulos as any)(datos.frases, 62, (timeline as { palabras?: unknown }).palabras ?? null) as { parrafo: string; texto: string; inicio: number; fin: number }[];
 export const HABLANTES = guion.hablantes;
 
 /** Segundo en que se dice la palabra marcada. Ej.: cue("M5.e0"), cue("M5") = inicio del párrafo, cue("M5.fin"). */

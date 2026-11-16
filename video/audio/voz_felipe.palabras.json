@@ -1,0 +1,1499 @@
+{
+ "_ayuda": "Tiempo (segundos del archivo de audio) de cada palabra del guion, medido con faster-whisper.",
+ "audio": "voz_felipe.m4a",
+ "sha1": "54543a0a3f1b37907c0e02faba8b17a2d6030428",
+ "modelo": "large-v3-turbo",
+ "coincidencia": 0.958,
+ "palabras": [
+  {
+   "p": "Continuando",
+   "inicio": 0.24,
+   "fin": 0.98
+  },
+  {
+   "p": "con",
+   "inicio": 0.98,
+   "fin": 1.14
+  },
+  {
+   "p": "lo",
+   "inicio": 1.14,
+   "fin": 1.26
+  },
+  {
+   "p": "anterior,",
+   "inicio": 1.26,
+   "fin": 1.56
+  },
+  {
+   "p": "utilizamos",
+   "inicio": 1.78,
+   "fin": 2.26
+  },
+  {
+   "p": "el",
+   "inicio": 2.26,
+   "fin": 2.4
+  },
+  {
+   "p": "jacobiano",
+   "inicio": 2.4,
+   "fin": 2.8
+  },
+  {
+   "p": "para",
+   "inicio": 2.8,
+   "fin": 3.04
+  },
+  {
+   "p": "estudiar",
+   "inicio": 3.04,
+   "fin": 3.38
+  },
+  {
+   "p": "el",
+   "inicio": 3.38,
+   "fin": 3.54
+  },
+  {
+   "p": "área",
+   "inicio": 3.54,
+   "fin": 3.7
+  },
+  {
+   "p": "barrida",
+   "inicio": 3.7,
+   "fin": 4.04
+  },
+  {
+   "p": "por",
+   "inicio": 4.04,
+   "fin": 4.26
+  },
+  {
+   "p": "el",
+   "inicio": 4.26,
+   "fin": 4.4
+  },
+  {
+   "p": "radio",
+   "inicio": 4.4,
+   "fin": 4.618
+  },
+  {
+   "p": "vector",
+   "inicio": 4.618,
+   "fin": 4.88
+  },
+  {
+   "p": "de",
+   "inicio": 4.88,
+   "fin": 5.04
+  },
+  {
+   "p": "una",
+   "inicio": 5.04,
+   "fin": 5.18
+  },
+  {
+   "p": "órbita.",
+   "inicio": 5.18,
+   "fin": 5.58
+  },
+  {
+   "p": "Esta",
+   "inicio": 5.84,
+   "fin": 6.44
+  },
+  {
+   "p": "área",
+   "inicio": 6.44,
+   "fin": 6.7
+  },
+  {
+   "p": "se",
+   "inicio": 6.7,
+   "fin": 7.1
+  },
+  {
+   "p": "calcula",
+   "inicio": 7.1,
+   "fin": 7.54
+  },
+  {
+   "p": "mediante",
+   "inicio": 7.54,
+   "fin": 7.9
+  },
+  {
+   "p": "una",
+   "inicio": 7.9,
+   "fin": 8.02
+  },
+  {
+   "p": "integral",
+   "inicio": 8.02,
+   "fin": 8.46
+  },
+  {
+   "p": "de",
+   "inicio": 8.46,
+   "fin": 9.06
+  },
+  {
+   "p": "un",
+   "inicio": 9.06,
+   "fin": 9.56
+  },
+  {
+   "p": "medio",
+   "inicio": 9.56,
+   "fin": 9.94
+  },
+  {
+   "p": "por",
+   "inicio": 9.94,
+   "fin": 10.36
+  },
+  {
+   "p": "r",
+   "inicio": 10.36,
+   "fin": 10.52
+  },
+  {
+   "p": "al",
+   "inicio": 10.52,
+   "fin": 10.68
+  },
+  {
+   "p": "cuadrado",
+   "inicio": 10.68,
+   "fin": 11.02
+  },
+  {
+   "p": "respecto",
+   "inicio": 11.02,
+   "fin": 11.48
+  },
+  {
+   "p": "de",
+   "inicio": 11.48,
+   "fin": 11.66
+  },
+  {
+   "p": "theta.",
+   "inicio": 11.66,
+   "fin": 11.9
+  },
+  {
+   "p": "A",
+   "inicio": 12.66,
+   "fin": 13.26
+  },
+  {
+   "p": "partir",
+   "inicio": 13.26,
+   "fin": 13.58
+  },
+  {
+   "p": "de",
+   "inicio": 13.58,
+   "fin": 13.82
+  },
+  {
+   "p": "esto",
+   "inicio": 13.82,
+   "fin": 14.12
+  },
+  {
+   "p": "analizamos",
+   "inicio": 14.24,
+   "fin": 14.84
+  },
+  {
+   "p": "la",
+   "inicio": 14.84,
+   "fin": 15.0
+  },
+  {
+   "p": "segunda",
+   "inicio": 15.0,
+   "fin": 15.3
+  },
+  {
+   "p": "ley",
+   "inicio": 15.3,
+   "fin": 15.52
+  },
+  {
+   "p": "de",
+   "inicio": 15.52,
+   "fin": 15.62
+  },
+  {
+   "p": "Kepler,",
+   "inicio": 15.62,
+   "fin": 15.96
+  },
+  {
+   "p": "que",
+   "inicio": 16.14,
+   "fin": 16.3
+  },
+  {
+   "p": "establece",
+   "inicio": 16.3,
+   "fin": 16.74
+  },
+  {
+   "p": "que",
+   "inicio": 16.74,
+   "fin": 16.86
+  },
+  {
+   "p": "el",
+   "inicio": 16.86,
+   "fin": 16.96
+  },
+  {
+   "p": "radio",
+   "inicio": 16.96,
+   "fin": 17.242
+  },
+  {
+   "p": "vector",
+   "inicio": 17.242,
+   "fin": 17.58
+  },
+  {
+   "p": "barre",
+   "inicio": 17.58,
+   "fin": 17.92
+  },
+  {
+   "p": "áreas",
+   "inicio": 17.92,
+   "fin": 18.3
+  },
+  {
+   "p": "iguales",
+   "inicio": 18.3,
+   "fin": 18.84
+  },
+  {
+   "p": "en",
+   "inicio": 18.84,
+   "fin": 19.02
+  },
+  {
+   "p": "tiempos",
+   "inicio": 19.02,
+   "fin": 19.4
+  },
+  {
+   "p": "iguales.",
+   "inicio": 19.4,
+   "fin": 19.82
+  },
+  {
+   "p": "En",
+   "inicio": 21.62,
+   "fin": 22.0
+  },
+  {
+   "p": "nuestra",
+   "inicio": 22.0,
+   "fin": 22.22
+  },
+  {
+   "p": "página",
+   "inicio": 22.22,
+   "fin": 22.58
+  },
+  {
+   "p": "representamos",
+   "inicio": 22.86,
+   "fin": 23.5
+  },
+  {
+   "p": "dos",
+   "inicio": 23.5,
+   "fin": 23.74
+  },
+  {
+   "p": "sectores",
+   "inicio": 23.74,
+   "fin": 24.08
+  },
+  {
+   "p": "de",
+   "inicio": 24.08,
+   "fin": 24.18
+  },
+  {
+   "p": "una",
+   "inicio": 24.18,
+   "fin": 24.32
+  },
+  {
+   "p": "elipse.",
+   "inicio": 24.32,
+   "fin": 24.58
+  },
+  {
+   "p": "Aunque",
+   "inicio": 25.02,
+   "fin": 25.3
+  },
+  {
+   "p": "tienen",
+   "inicio": 25.3,
+   "fin": 25.56
+  },
+  {
+   "p": "diferentes",
+   "inicio": 25.56,
+   "fin": 25.96
+  },
+  {
+   "p": "amplitudes",
+   "inicio": 25.96,
+   "fin": 26.38
+  },
+  {
+   "p": "angulares,",
+   "inicio": 26.38,
+   "fin": 26.88
+  },
+  {
+   "p": "sus",
+   "inicio": 27.12,
+   "fin": 27.4
+  },
+  {
+   "p": "áreas",
+   "inicio": 27.4,
+   "fin": 27.62
+  },
+  {
+   "p": "son",
+   "inicio": 27.62,
+   "fin": 27.84
+  },
+  {
+   "p": "prácticamente",
+   "inicio": 27.84,
+   "fin": 28.34
+  },
+  {
+   "p": "iguales.",
+   "inicio": 28.34,
+   "fin": 28.86
+  },
+  {
+   "p": "Esto",
+   "inicio": 29.34,
+   "fin": 29.66
+  },
+  {
+   "p": "se",
+   "inicio": 29.66,
+   "fin": 29.84
+  },
+  {
+   "p": "debe",
+   "inicio": 29.84,
+   "fin": 29.94
+  },
+  {
+   "p": "a",
+   "inicio": 29.94,
+   "fin": 30.02
+  },
+  {
+   "p": "que",
+   "inicio": 30.02,
+   "fin": 30.1
+  },
+  {
+   "p": "el",
+   "inicio": 30.1,
+   "fin": 30.2
+  },
+  {
+   "p": "radio",
+   "inicio": 30.2,
+   "fin": 30.52
+  },
+  {
+   "p": "es",
+   "inicio": 30.52,
+   "fin": 30.84
+  },
+  {
+   "p": "mayor",
+   "inicio": 30.84,
+   "fin": 31.08
+  },
+  {
+   "p": "en",
+   "inicio": 31.08,
+   "fin": 31.22
+  },
+  {
+   "p": "algunas",
+   "inicio": 31.22,
+   "fin": 31.46
+  },
+  {
+   "p": "zonas",
+   "inicio": 31.46,
+   "fin": 31.66
+  },
+  {
+   "p": "de",
+   "inicio": 31.66,
+   "fin": 31.784
+  },
+  {
+   "p": "la",
+   "inicio": 31.784,
+   "fin": 31.908
+  },
+  {
+   "p": "órbita",
+   "inicio": 31.908,
+   "fin": 32.28
+  },
+  {
+   "p": "y",
+   "inicio": 32.28,
+   "fin": 32.8
+  },
+  {
+   "p": "menor",
+   "inicio": 32.8,
+   "fin": 33.12
+  },
+  {
+   "p": "en",
+   "inicio": 33.12,
+   "fin": 33.44
+  },
+  {
+   "p": "otras.",
+   "inicio": 33.44,
+   "fin": 33.66
+  },
+  {
+   "p": "Después",
+   "inicio": 35.98,
+   "fin": 36.62
+  },
+  {
+   "p": "estudiamos",
+   "inicio": 36.62,
+   "fin": 37.26
+  },
+  {
+   "p": "el",
+   "inicio": 37.26,
+   "fin": 37.44
+  },
+  {
+   "p": "potencial",
+   "inicio": 37.44,
+   "fin": 37.82
+  },
+  {
+   "p": "gravitatorio,",
+   "inicio": 37.82,
+   "fin": 38.52
+  },
+  {
+   "p": "definido",
+   "inicio": 38.72,
+   "fin": 39.26
+  },
+  {
+   "p": "como",
+   "inicio": 39.26,
+   "fin": 39.88
+  },
+  {
+   "p": "menos",
+   "inicio": 39.88,
+   "fin": 40.38
+  },
+  {
+   "p": "mu",
+   "inicio": 40.38,
+   "fin": 40.6
+  },
+  {
+   "p": "dividido",
+   "inicio": 40.6,
+   "fin": 41.18
+  },
+  {
+   "p": "por",
+   "inicio": 41.18,
+   "fin": 41.34
+  },
+  {
+   "p": "la",
+   "inicio": 41.34,
+   "fin": 41.44
+  },
+  {
+   "p": "distancia",
+   "inicio": 41.44,
+   "fin": 41.78
+  },
+  {
+   "p": "al",
+   "inicio": 41.78,
+   "fin": 41.9
+  },
+  {
+   "p": "foco.",
+   "inicio": 41.9,
+   "fin": 42.1
+  },
+  {
+   "p": "Calculamos",
+   "inicio": 44.73,
+   "fin": 45.37
+  },
+  {
+   "p": "sus",
+   "inicio": 45.37,
+   "fin": 45.57
+  },
+  {
+   "p": "derivadas",
+   "inicio": 45.57,
+   "fin": 45.95
+  },
+  {
+   "p": "parciales",
+   "inicio": 45.95,
+   "fin": 46.59
+  },
+  {
+   "p": "y",
+   "inicio": 46.59,
+   "fin": 46.91
+  },
+  {
+   "p": "obtuvimos",
+   "inicio": 46.91,
+   "fin": 47.35
+  },
+  {
+   "p": "el",
+   "inicio": 47.35,
+   "fin": 47.55
+  },
+  {
+   "p": "gradiente.",
+   "inicio": 47.55,
+   "fin": 48.07
+  },
+  {
+   "p": "El",
+   "inicio": 48.55,
+   "fin": 49.19
+  },
+  {
+   "p": "negativo",
+   "inicio": 49.19,
+   "fin": 49.65
+  },
+  {
+   "p": "de",
+   "inicio": 49.65,
+   "fin": 49.81
+  },
+  {
+   "p": "ese",
+   "inicio": 49.81,
+   "fin": 49.93
+  },
+  {
+   "p": "gradiente",
+   "inicio": 49.93,
+   "fin": 50.45
+  },
+  {
+   "p": "representa",
+   "inicio": 50.45,
+   "fin": 51.25
+  },
+  {
+   "p": "un",
+   "inicio": 51.25,
+   "fin": 51.63
+  },
+  {
+   "p": "campo",
+   "inicio": 51.63,
+   "fin": 51.95
+  },
+  {
+   "p": "dirigido",
+   "inicio": 51.95,
+   "fin": 52.33
+  },
+  {
+   "p": "hacia",
+   "inicio": 52.33,
+   "fin": 52.47
+  },
+  {
+   "p": "el",
+   "inicio": 52.47,
+   "fin": 52.63
+  },
+  {
+   "p": "centro",
+   "inicio": 52.63,
+   "fin": 52.81
+  },
+  {
+   "p": "de",
+   "inicio": 52.81,
+   "fin": 52.91
+  },
+  {
+   "p": "atracción.",
+   "inicio": 52.95,
+   "fin": 53.29
+  },
+  {
+   "p": "Como",
+   "inicio": 56.08,
+   "fin": 56.62
+  },
+  {
+   "p": "podemos",
+   "inicio": 56.62,
+   "fin": 56.92
+  },
+  {
+   "p": "ver",
+   "inicio": 56.92,
+   "fin": 57.1
+  },
+  {
+   "p": "en",
+   "inicio": 57.1,
+   "fin": 57.22
+  },
+  {
+   "p": "la",
+   "inicio": 57.22,
+   "fin": 57.32
+  },
+  {
+   "p": "página,",
+   "inicio": 57.32,
+   "fin": 57.7
+  },
+  {
+   "p": "las",
+   "inicio": 57.96,
+   "fin": 58.54
+  },
+  {
+   "p": "curvas",
+   "inicio": 58.54,
+   "fin": 58.8
+  },
+  {
+   "p": "de",
+   "inicio": 58.8,
+   "fin": 58.94
+  },
+  {
+   "p": "nivel",
+   "inicio": 58.94,
+   "fin": 59.22
+  },
+  {
+   "p": "del",
+   "inicio": 59.22,
+   "fin": 59.78
+  },
+  {
+   "p": "potencial",
+   "inicio": 59.78,
+   "fin": 60.26
+  },
+  {
+   "p": "son",
+   "inicio": 60.26,
+   "fin": 61.26
+  },
+  {
+   "p": "circunferencias",
+   "inicio": 61.26,
+   "fin": 62.3
+  },
+  {
+   "p": "concéntricas,",
+   "inicio": 62.3,
+   "fin": 62.96
+  },
+  {
+   "p": "mientras",
+   "inicio": 63.34,
+   "fin": 63.96
+  },
+  {
+   "p": "que",
+   "inicio": 63.96,
+   "fin": 64.1
+  },
+  {
+   "p": "las",
+   "inicio": 64.1,
+   "fin": 64.22
+  },
+  {
+   "p": "flechas",
+   "inicio": 64.22,
+   "fin": 64.48
+  },
+  {
+   "p": "del",
+   "inicio": 64.48,
+   "fin": 64.66
+  },
+  {
+   "p": "campo",
+   "inicio": 64.66,
+   "fin": 65.0
+  },
+  {
+   "p": "apuntan",
+   "inicio": 65.0,
+   "fin": 65.48
+  },
+  {
+   "p": "hacia",
+   "inicio": 65.48,
+   "fin": 65.62
+  },
+  {
+   "p": "el",
+   "inicio": 65.62,
+   "fin": 65.76
+  },
+  {
+   "p": "foco",
+   "inicio": 65.76,
+   "fin": 66.04
+  },
+  {
+   "p": "gravitatorio.",
+   "inicio": 66.04,
+   "fin": 66.6
+  },
+  {
+   "p": "También",
+   "inicio": 68.52,
+   "fin": 69.14
+  },
+  {
+   "p": "analizamos",
+   "inicio": 69.14,
+   "fin": 70.26
+  },
+  {
+   "p": "que,",
+   "inicio": 70.26,
+   "fin": 70.56
+  },
+  {
+   "p": "cuando",
+   "inicio": 70.56,
+   "fin": 70.82
+  },
+  {
+   "p": "nos",
+   "inicio": 70.82,
+   "fin": 71.0
+  },
+  {
+   "p": "alejamos",
+   "inicio": 71.0,
+   "fin": 71.44
+  },
+  {
+   "p": "del",
+   "inicio": 71.44,
+   "fin": 71.6
+  },
+  {
+   "p": "foco,",
+   "inicio": 71.6,
+   "fin": 71.96
+  },
+  {
+   "p": "el",
+   "inicio": 72.1,
+   "fin": 72.38
+  },
+  {
+   "p": "potencial",
+   "inicio": 72.38,
+   "fin": 72.76
+  },
+  {
+   "p": "se",
+   "inicio": 72.76,
+   "fin": 72.94
+  },
+  {
+   "p": "aproxima",
+   "inicio": 72.94,
+   "fin": 73.4
+  },
+  {
+   "p": "a",
+   "inicio": 73.4,
+   "fin": 73.5
+  },
+  {
+   "p": "cero",
+   "inicio": 73.5,
+   "fin": 73.68
+  },
+  {
+   "p": "y",
+   "inicio": 73.82,
+   "fin": 74.2
+  },
+  {
+   "p": "la",
+   "inicio": 74.2,
+   "fin": 74.3
+  },
+  {
+   "p": "intensidad",
+   "inicio": 74.3,
+   "fin": 74.68
+  },
+  {
+   "p": "del",
+   "inicio": 74.68,
+   "fin": 74.82
+  },
+  {
+   "p": "campo",
+   "inicio": 74.82,
+   "fin": 75.02
+  },
+  {
+   "p": "disminuye.",
+   "inicio": 75.02,
+   "fin": 75.52
+  },
+  {
+   "p": "En",
+   "inicio": 76.33,
+   "fin": 76.68
+  },
+  {
+   "p": "el",
+   "inicio": 76.68,
+   "fin": 76.8
+  },
+  {
+   "p": "foco,",
+   "inicio": 76.8,
+   "fin": 77.08
+  },
+  {
+   "p": "la",
+   "inicio": 77.08,
+   "fin": 77.22
+  },
+  {
+   "p": "función",
+   "inicio": 77.22,
+   "fin": 77.64
+  },
+  {
+   "p": "no",
+   "inicio": 77.64,
+   "fin": 77.96
+  },
+  {
+   "p": "está",
+   "inicio": 77.96,
+   "fin": 78.06
+  },
+  {
+   "p": "definida.",
+   "inicio": 78.06,
+   "fin": 78.52
+  },
+  {
+   "p": "Para",
+   "inicio": 81.2,
+   "fin": 81.6
+  },
+  {
+   "p": "complementar",
+   "inicio": 81.6,
+   "fin": 82.22
+  },
+  {
+   "p": "el",
+   "inicio": 82.22,
+   "fin": 82.34
+  },
+  {
+   "p": "trabajo",
+   "inicio": 82.34,
+   "fin": 82.72
+  },
+  {
+   "p": "utilizamos",
+   "inicio": 82.92,
+   "fin": 83.52
+  },
+  {
+   "p": "Python,",
+   "inicio": 83.52,
+   "fin": 83.84
+  },
+  {
+   "p": "con",
+   "inicio": 85.0,
+   "fin": 85.7
+  },
+  {
+   "p": "el",
+   "inicio": 85.7,
+   "fin": 85.82
+  },
+  {
+   "p": "que",
+   "inicio": 85.82,
+   "fin": 85.92
+  },
+  {
+   "p": "generamos",
+   "inicio": 85.92,
+   "fin": 86.34
+  },
+  {
+   "p": "representaciones",
+   "inicio": 86.34,
+   "fin": 86.98
+  },
+  {
+   "p": "de",
+   "inicio": 86.98,
+   "fin": 87.14
+  },
+  {
+   "p": "las",
+   "inicio": 87.14,
+   "fin": 87.34
+  },
+  {
+   "p": "órbitas,",
+   "inicio": 87.34,
+   "fin": 87.8
+  },
+  {
+   "p": "una",
+   "inicio": 88.48,
+   "fin": 89.04
+  },
+  {
+   "p": "superficie",
+   "inicio": 89.04,
+   "fin": 89.54
+  },
+  {
+   "p": "tridimensional",
+   "inicio": 89.54,
+   "fin": 90.18
+  },
+  {
+   "p": "del",
+   "inicio": 90.18,
+   "fin": 90.46
+  },
+  {
+   "p": "potencial",
+   "inicio": 90.46,
+   "fin": 90.94
+  },
+  {
+   "p": "y",
+   "inicio": 90.94,
+   "fin": 91.36
+  },
+  {
+   "p": "visualizaciones",
+   "inicio": 91.36,
+   "fin": 91.92
+  },
+  {
+   "p": "del",
+   "inicio": 91.92,
+   "fin": 92.08
+  },
+  {
+   "p": "campo",
+   "inicio": 92.08,
+   "fin": 92.24
+  },
+  {
+   "p": "gravitatorio.",
+   "inicio": 92.24,
+   "fin": 92.74
+  },
+  {
+   "p": "En",
+   "inicio": 92.74,
+   "fin": 93.68
+  },
+  {
+   "p": "la",
+   "inicio": 96.46,
+   "fin": 96.58
+  },
+  {
+   "p": "parte",
+   "inicio": 96.58,
+   "fin": 96.82
+  },
+  {
+   "p": "de",
+   "inicio": 96.82,
+   "fin": 96.94
+  },
+  {
+   "p": "ajuste",
+   "inicio": 96.94,
+   "fin": 97.38
+  },
+  {
+   "p": "planteamos",
+   "inicio": 97.38,
+   "fin": 98.16
+  },
+  {
+   "p": "una",
+   "inicio": 98.16,
+   "fin": 98.6
+  },
+  {
+   "p": "función",
+   "inicio": 98.6,
+   "fin": 99.04
+  },
+  {
+   "p": "de",
+   "inicio": 99.04,
+   "fin": 99.2
+  },
+  {
+   "p": "error",
+   "inicio": 99.2,
+   "fin": 99.38
+  },
+  {
+   "p": "para",
+   "inicio": 99.38,
+   "fin": 99.88
+  },
+  {
+   "p": "estimar",
+   "inicio": 99.88,
+   "fin": 100.2
+  },
+  {
+   "p": "los",
+   "inicio": 100.2,
+   "fin": 100.32
+  },
+  {
+   "p": "parámetros",
+   "inicio": 100.32,
+   "fin": 100.74
+  },
+  {
+   "p": "de",
+   "inicio": 100.74,
+   "fin": 100.96
+  },
+  {
+   "p": "una",
+   "inicio": 100.96,
+   "fin": 101.08
+  },
+  {
+   "p": "órbita",
+   "inicio": 101.08,
+   "fin": 101.54
+  },
+  {
+   "p": "a",
+   "inicio": 101.54,
+   "fin": 102.12
+  },
+  {
+   "p": "partir",
+   "inicio": 102.12,
+   "fin": 102.4
+  },
+  {
+   "p": "de",
+   "inicio": 102.4,
+   "fin": 102.56
+  },
+  {
+   "p": "observaciones.",
+   "inicio": 102.66,
+   "fin": 103.22
+  },
+  {
+   "p": "Como",
+   "inicio": 103.86,
+   "fin": 104.62
+  },
+  {
+   "p": "todavía",
+   "inicio": 104.62,
+   "fin": 105.02
+  },
+  {
+   "p": "no",
+   "inicio": 105.02,
+   "fin": 105.52
+  },
+  {
+   "p": "contamos",
+   "inicio": 105.52,
+   "fin": 105.86
+  },
+  {
+   "p": "con",
+   "inicio": 105.86,
+   "fin": 106.02
+  },
+  {
+   "p": "los",
+   "inicio": 106.02,
+   "fin": 106.08
+  },
+  {
+   "p": "datos",
+   "inicio": 106.08,
+   "fin": 106.24
+  },
+  {
+   "p": "oficiales",
+   "inicio": 106.24,
+   "fin": 106.86
+  },
+  {
+   "p": "del",
+   "inicio": 106.86,
+   "fin": 106.98
+  },
+  {
+   "p": "Grupo",
+   "inicio": 106.98,
+   "fin": 107.14
+  },
+  {
+   "p": "14,",
+   "inicio": 107.14,
+   "fin": 107.5
+  },
+  {
+   "p": "utilizamos",
+   "inicio": 107.82,
+   "fin": 108.96
+  },
+  {
+   "p": "un",
+   "inicio": 108.96,
+   "fin": 109.38
+  },
+  {
+   "p": "conjunto",
+   "inicio": 109.38,
+   "fin": 109.68
+  },
+  {
+   "p": "de",
+   "inicio": 109.68,
+   "fin": 109.84
+  },
+  {
+   "p": "referencia",
+   "inicio": 109.84,
+   "fin": 110.32
+  },
+  {
+   "p": "únicamente",
+   "inicio": 110.32,
+   "fin": 111.04
+  },
+  {
+   "p": "para",
+   "inicio": 111.04,
+   "fin": 111.22
+  },
+  {
+   "p": "explicar",
+   "inicio": 111.22,
+   "fin": 111.46
+  },
+  {
+   "p": "el",
+   "inicio": 111.46,
+   "fin": 111.6
+  },
+  {
+   "p": "procedimiento.",
+   "inicio": 111.6,
+   "fin": 112.16
+  },
+  {
+   "p": "Finalmente,",
+   "inicio": 114.69,
+   "fin": 115.45
+  },
+  {
+   "p": "desarrollamos",
+   "inicio": 115.45,
+   "fin": 116.45
+  },
+  {
+   "p": "una",
+   "inicio": 116.45,
+   "fin": 116.65
+  },
+  {
+   "p": "página",
+   "inicio": 116.65,
+   "fin": 116.97
+  },
+  {
+   "p": "interactiva",
+   "inicio": 116.97,
+   "fin": 117.61
+  },
+  {
+   "p": "para",
+   "inicio": 117.61,
+   "fin": 118.39
+  },
+  {
+   "p": "visualizar",
+   "inicio": 118.39,
+   "fin": 118.89
+  },
+  {
+   "p": "estos",
+   "inicio": 118.89,
+   "fin": 119.07
+  },
+  {
+   "p": "conceptos",
+   "inicio": 119.07,
+   "fin": 119.67
+  },
+  {
+   "p": "y",
+   "inicio": 119.67,
+   "fin": 120.17
+  },
+  {
+   "p": "comprobar",
+   "inicio": 120.17,
+   "fin": 120.71
+  },
+  {
+   "p": "cómo",
+   "inicio": 120.71,
+   "fin": 121.29
+  },
+  {
+   "p": "cambian",
+   "inicio": 121.29,
+   "fin": 121.73
+  },
+  {
+   "p": "los",
+   "inicio": 121.73,
+   "fin": 121.91
+  },
+  {
+   "p": "resultados",
+   "inicio": 121.91,
+   "fin": 122.33
+  },
+  {
+   "p": "al",
+   "inicio": 122.33,
+   "fin": 122.75
+  },
+  {
+   "p": "modificar",
+   "inicio": 122.75,
+   "fin": 123.11
+  },
+  {
+   "p": "los",
+   "inicio": 123.11,
+   "fin": 123.25
+  },
+  {
+   "p": "parámetros.",
+   "inicio": 123.25,
+   "fin": 123.61
+  },
+  {
+   "p": "En",
+   "inicio": 123.61,
+   "fin": 124.57
+  },
+  {
+   "p": "conclusión,",
+   "inicio": 127.16,
+   "fin": 127.76
+  },
+  {
+   "p": "el",
+   "inicio": 128.1,
+   "fin": 128.62
+  },
+  {
+   "p": "proyecto",
+   "inicio": 128.62,
+   "fin": 128.96
+  },
+  {
+   "p": "nos",
+   "inicio": 128.96,
+   "fin": 129.2
+  },
+  {
+   "p": "permitió",
+   "inicio": 129.2,
+   "fin": 130.08
+  },
+  {
+   "p": "relacionar",
+   "inicio": 130.08,
+   "fin": 130.68
+  },
+  {
+   "p": "distintos",
+   "inicio": 130.68,
+   "fin": 130.94
+  },
+  {
+   "p": "temas",
+   "inicio": 130.94,
+   "fin": 131.26
+  },
+  {
+   "p": "de",
+   "inicio": 131.26,
+   "fin": 131.36
+  },
+  {
+   "p": "Análisis",
+   "inicio": 131.36,
+   "fin": 131.64
+  },
+  {
+   "p": "Matemático",
+   "inicio": 131.64,
+   "fin": 132.107
+  },
+  {
+   "p": "II",
+   "inicio": 132.107,
+   "fin": 132.2
+  },
+  {
+   "p": "y",
+   "inicio": 132.2,
+   "fin": 132.72
+  },
+  {
+   "p": "observar",
+   "inicio": 132.72,
+   "fin": 133.14
+  },
+  {
+   "p": "cómo",
+   "inicio": 133.14,
+   "fin": 133.34
+  },
+  {
+   "p": "las",
+   "inicio": 133.34,
+   "fin": 133.54
+  },
+  {
+   "p": "herramientas",
+   "inicio": 133.54,
+   "fin": 134.0
+  },
+  {
+   "p": "matemáticas",
+   "inicio": 134.0,
+   "fin": 134.6
+  },
+  {
+   "p": "pueden",
+   "inicio": 134.6,
+   "fin": 135.16
+  },
+  {
+   "p": "utilizarse",
+   "inicio": 135.16,
+   "fin": 135.8
+  },
+  {
+   "p": "para",
+   "inicio": 135.8,
+   "fin": 136.0
+  },
+  {
+   "p": "representar",
+   "inicio": 136.0,
+   "fin": 136.54
+  },
+  {
+   "p": "un",
+   "inicio": 136.54,
+   "fin": 136.64
+  },
+  {
+   "p": "fenómeno",
+   "inicio": 136.64,
+   "fin": 137.06
+  },
+  {
+   "p": "físico.",
+   "inicio": 137.06,
+   "fin": 137.48
+  }
+ ]
+}

@@ -8,5 +8,7 @@ También sirven .m4a o .mp3 con el mismo nombre. Después, desde la carpeta vide
     npm run render
 
 Eso alinea las escenas con cada frase, mezcla las voces sin modificarlas y genera el MP4 final.
+También funciona con una sola de las dos grabaciones (la otra parte queda en silencio por ahora).
+Para una sincronía más fina, antes del render:  pip install faster-whisper  y  npm run alinear
 Consejo de grabación: dejar una pausa clara (medio segundo o más) al terminar cada frase y un poco más
 al terminar cada párrafo; el alineador se guía por esas pausas.

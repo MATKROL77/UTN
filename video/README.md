@@ -35,13 +35,29 @@ Archivos que produce `npm run render`:
 2. Copiar los archivos a `video/audio/voz_matias.wav` y `video/audio/voz_felipe.wav` (también vale `.m4a` o `.mp3`).
 3. Ejecutar `npm run render`.
 
-Con eso alcanza. El render detecta las voces y:
+Con eso alcanza, y también funciona **con una sola voz**: la parte de quien todavía no grabó queda en silencio y
+con tiempos estimados. El render detecta las voces y:
 
 - **alinea** la línea de tiempo (`npm run sync`): mide dónde empieza y termina cada frase en cada grabación y
   reescribe `timeline.json`; todas las escenas se estiran o se acortan solas, porque cada animación está atada
   a una palabra del guion y no a un segundo fijo;
 - **mezcla** las dos voces en el MP4 en el orden del guion (primero Matías, después Felipe), sin cortarlas ni
   cambiarles la velocidad; la duración del video se adapta a la lectura.
+
+**Alineación fina, palabra por palabra (opcional, recomendada).** Antes del render:
+
+```sh
+pip install faster-whisper
+npm run alinear        # python3 scripts/alinear_palabras.py
+```
+
+Un reconocedor de voz local y gratuito (el audio no sale de la máquina) ubica cada palabra del guion en la
+grabación y escribe `audio/voz_<nombre>.palabras.json`. Con ese archivo, `npm run sync` fija cada frase y cada cue
+en la palabra exacta, afinando los inicios con el sonido real, y los subtítulos siguen a la voz. El script también
+lista las diferencias entre lo oído y el guion. Sin ese archivo, la alineación se hace solo por las pausas.
+
+Las grabaciones (`audio/*.wav`, `*.m4a`, …) y los videos `*_con_voz*` están en `.gitignore`: son voces de personas
+y este repositorio es público. Quitar esas líneas solo si se decide subirlas.
 
 Para revisar la sincronía antes de renderizar: `npm run sync` y luego `npm run dev` (la vista previa reproduce
 las voces). Si alguna frase quedó corrida (el script marca las dudosas con `⚠ revisar`):

@@ -2,7 +2,7 @@
 // Uso: npm run timeline -- [--segundos-por-parte 150] [--si-falta]
 // Cuando existan las voces reales, usar "npm run sync" (scripts/sync-audio.mjs), que reemplaza esta estimación.
 import fs from "node:fs";
-import { TIMELINE, argumentos, escribirTimeline, frasesDe, leerGuion, peso, redondear } from "./lib.mjs";
+import { TIMELINE, argumentos, escribirTimeline, estimarParte, leerGuion, redondear } from "./lib.mjs";
 
 const { flags } = argumentos();
 if (flags["si-falta"] && fs.existsSync(TIMELINE)) process.exit(0);
@@ -16,29 +16,15 @@ export const PARAMETROS = {
 
 const guion = leerGuion();
 const porParte = Number(flags["segundos-por-parte"] || 150);
-const PAUSA_FRASE = 0.5;
-const PAUSA_PARRAFO = 0.9;
 
 const frases = [];
 let cursor = PARAMETROS.entrada;
 const voces = {};
 for (const quien of ["M", "F"]) {
-  const parrafos = guion.parrafos.filter((p) => p.id.startsWith(quien));
-  const lista = parrafos.map((p) => frasesDe(p));
-  const pausas = lista.reduce((a, fs_) => a + (fs_.length - 1) * PAUSA_FRASE, 0) + (parrafos.length - 1) * PAUSA_PARRAFO;
-  const pesoTotal = lista.flat().reduce((a, f) => a + peso(f.texto), 0);
-  const ritmo = pesoTotal / (porParte - pausas); // unidades de lectura por segundo
-  const inicio = cursor;
-  lista.forEach((fs_, i) => {
-    fs_.forEach((f, j) => {
-      const d = peso(f.texto) / ritmo;
-      frases.push({ id: f.id, inicio: redondear(cursor), fin: redondear(cursor + d) });
-      cursor += d + (j < fs_.length - 1 ? PAUSA_FRASE : 0);
-    });
-    if (i < lista.length - 1) cursor += PAUSA_PARRAFO;
-  });
-  voces[quien] = { archivo: null, desfase: redondear(inicio), inicioVoz: redondear(inicio), finVoz: redondear(cursor) };
-  cursor += PARAMETROS.pausaRelevo;
+  const est = estimarParte(guion.parrafos.filter((p) => p.id.startsWith(quien)), cursor, porParte);
+  frases.push(...est.frases);
+  voces[quien] = { archivo: null, metodo: "estimacion", desfase: redondear(cursor), recorteInicio: 0, inicioVoz: redondear(cursor), finVoz: est.fin };
+  cursor = est.fin + PARAMETROS.pausaRelevo;
 }
 const finVoz = voces.F.finVoz;
 escribirTimeline({
@@ -48,6 +34,7 @@ escribirTimeline({
   parametros: { ...PARAMETROS, segundosPorParte: porParte },
   voces,
   frases,
+  cuesMedidos: {},
   cuesManuales: {},
   inicioPantallaFinal: redondear(finVoz + PARAMETROS.colchonFinal),
   duracion: redondear(finVoz + PARAMETROS.colchonFinal + PARAMETROS.pantallaFinal),

@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 export { limpiar, peso, frasesDe, todasLasFrases, calcularCues, subtitulos } from "../guion/cues.js";
+import { frasesDe as _frasesDe, peso as _peso } from "../guion/cues.js";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const REPO = path.resolve(ROOT, "..");
@@ -54,4 +55,25 @@ export function argumentos(argv = process.argv.slice(2)) {
 export function correr(cmd, args, opts = {}) {
   const r = spawnSync(cmd, args, { stdio: "inherit", ...opts });
   if (r.status !== 0) throw new Error(`Falló: ${cmd} ${args.join(" ")}`);
+}
+
+/**
+ * Tiempos ESTIMADOS (sin audio) de las frases de una parte del guion: reparte `segundos` según el largo del texto.
+ * Devuelve { frases: [{ id, inicio, fin }], fin }.
+ */
+export function estimarParte(parrafos, inicio, segundos, pausaFrase = 0.5, pausaParrafo = 0.9) {
+  const lista = parrafos.map((p) => _frasesDe(p));
+  const pausas = lista.reduce((a, fs_) => a + (fs_.length - 1) * pausaFrase, 0) + (parrafos.length - 1) * pausaParrafo;
+  const ritmo = lista.flat().reduce((a, f) => a + _peso(f.texto), 0) / (segundos - pausas);
+  const frases = [];
+  let cursor = inicio;
+  lista.forEach((fs_, i) => {
+    fs_.forEach((f, j) => {
+      const d = _peso(f.texto) / ritmo;
+      frases.push({ id: f.id, inicio: redondear(cursor), fin: redondear(cursor + d) });
+      cursor += d + (j < fs_.length - 1 ? pausaFrase : 0);
+    });
+    if (i < lista.length - 1) cursor += pausaParrafo;
+  });
+  return { frases, fin: redondear(cursor) };
 }

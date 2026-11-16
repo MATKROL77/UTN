@@ -57,42 +57,49 @@ export function calcularCues(guion, timeline) {
     cues[`${p.id}.fin`] = fin;
     parrafos[p.id] = { inicio: ini, fin };
   }
-  for (const [id, t] of Object.entries(timeline.cuesManuales || {})) {
-    if (typeof t === "number") cues[id] = t;
+  // Prioridad: cues medidos palabra por palabra sobre la voz real, y por encima los fijados a mano.
+  for (const fuente of [timeline.cuesMedidos, timeline.cuesManuales]) {
+    for (const [id, t] of Object.entries(fuente || {})) if (typeof t === "number") cues[id] = t;
   }
   return { cues, parrafos, frases };
 }
 
-/** Corta una frase en renglones cortos de subtítulo, repartiendo el tiempo según el peso de lectura. */
-export function subtitulos(frases, maxLargo = 62) {
+/**
+ * Corta cada frase en renglones cortos de subtítulo. El tiempo de cada renglón se reparte según el peso de
+ * lectura o, si `palabras` trae los tiempos medidos de cada palabra ({ M: [[inicio, fin], …], F: […] }), se
+ * toma de la primera y la última palabra del renglón.
+ */
+export function subtitulos(frases, maxLargo = 62, palabras = null) {
   const out = [];
+  const cuenta = {}; // palabras ya recorridas de cada hablante
   for (const f of frases) {
-    const palabras = f.texto.split(/\s+/);
-    const trozos = [];
-    let actual = "";
-    for (const w of palabras) {
-      const candidato = actual ? `${actual} ${w}` : w;
-      if (candidato.length > maxLargo && actual) {
-        trozos.push(actual);
-        actual = w;
-      } else actual = candidato;
+    const quien = f.parrafo[0];
+    const base = cuenta[quien] || 0;
+    const lista = f.texto.split(/\s+/).filter(Boolean);
+    cuenta[quien] = base + lista.length;
+    const trozos = []; // [{ texto, n0, n }]
+    let actual = [], n0 = 0;
+    const cerrar = () => { if (actual.length) { trozos.push({ texto: actual.join(" "), n0, n: actual.length }); n0 += actual.length; actual = []; } };
+    for (const w of lista) {
+      if (actual.length && [...actual, w].join(" ").length > maxLargo) cerrar();
+      actual.push(w);
       // Corte natural en una coma si el renglón ya es razonablemente largo.
-      if (/[,;:]$/.test(w) && actual.length > maxLargo * 0.55) {
-        trozos.push(actual);
-        actual = "";
-      }
+      if (/[,;:]$/.test(w) && actual.join(" ").length > maxLargo * 0.55) cerrar();
     }
-    if (actual) trozos.push(actual);
+    cerrar();
     // Evita un último renglón demasiado corto.
-    if (trozos.length > 1 && trozos[trozos.length - 1].length < 14) {
-      const ultimo = trozos.pop();
-      trozos[trozos.length - 1] += ` ${ultimo}`;
+    if (trozos.length > 1 && trozos[trozos.length - 1].texto.length < 14) {
+      const ultimo = trozos.pop(), previo = trozos[trozos.length - 1];
+      previo.texto += ` ${ultimo.texto}`;
+      previo.n += ultimo.n;
     }
-    const total = trozos.reduce((a, s) => a + peso(s), 0) || 1;
+    const medidas = palabras && palabras[quien] && palabras[quien].length >= base + lista.length ? palabras[quien] : null;
+    const total = trozos.reduce((a, s) => a + peso(s.texto), 0) || 1;
     let t = f.inicio;
     for (const s of trozos) {
-      const d = ((f.fin - f.inicio) * peso(s)) / total;
-      out.push({ parrafo: f.parrafo, texto: s, inicio: t, fin: t + d });
+      const d = ((f.fin - f.inicio) * peso(s.texto)) / total;
+      if (medidas) out.push({ parrafo: f.parrafo, texto: s.texto, inicio: medidas[base + s.n0][0], fin: medidas[base + s.n0 + s.n - 1][1] });
+      else out.push({ parrafo: f.parrafo, texto: s.texto, inicio: t, fin: t + d });
       t += d;
     }
   }

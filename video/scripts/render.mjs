@@ -24,9 +24,9 @@ const seg = () => `${((Date.now() - t0) / 1000).toFixed(0)} s`;
 // 1) Voces: si están, alinear la línea de tiempo antes de compilar.
 const guion = leerGuion();
 const voces = { M: buscarAudio(guion.hablantes.M.audio), F: buscarAudio(guion.hablantes.F.audio) };
-const hayVoces = Boolean(voces.M && voces.F);
+const hayVoces = Boolean(voces.M || voces.F);
 if (hayVoces && !flags["sin-sync"]) correr("node", [path.join(ROOT, "scripts/sync-audio.mjs")]);
-else if (voces.M || voces.F) console.log("⚠ Falta una de las dos voces en audio/: se genera el video sin audio.");
+if (hayVoces && !(voces.M && voces.F)) console.log(`ℹ Solo está la voz de ${voces.M ? "Matías" : "Felipe"}: la otra parte queda en silencio, con tiempos estimados.`);
 
 // 2) Compilar y servir la composición.
 const sitio = await prepararSitio();
@@ -106,7 +106,7 @@ correr(FFMPEG, ["-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lista, 
 // 5) Subtítulos (.srt para reproductores y .ass para grabarlos en la imagen).
 const desfaseT = f0 / fps;
 const { frases } = calcularCues(guion, tl);
-const subs = subtitulos(frases, 54).map((s) => ({ ...s, inicio: s.inicio - desfaseT, fin: s.fin - desfaseT })).filter((s) => s.fin > 0 && s.inicio < total / fps);
+const subs = subtitulos(frases, 54, tl.palabras || null).map((s) => ({ ...s, inicio: s.inicio - desfaseT, fin: s.fin - desfaseT })).filter((s) => s.fin > 0 && s.inicio < total / fps);
 // Cada renglón queda un instante más en pantalla, pero nunca se pisa con el siguiente.
 subs.forEach((s, i) => { s.fin = Math.min(s.fin + 0.3, i + 1 < subs.length ? subs[i + 1].inicio - 0.04 : s.fin + 0.3); });
 const hms = (t, sep) => {
@@ -139,14 +139,16 @@ ${subs.map((s) => `Dialogue: 0,${hms(s.inicio, ".")},${hms(s.fin, ".")},Sub,,0,0
 const crf = String(flags.crf || 19);
 const audioArgs = [], audioMapa = [];
 if (hayVoces && tl.fuente === "audio") {
-  const filtros = ["M", "F"].map((q, i) => {
+  const presentes = ["M", "F"].filter((q) => voces[q] && tl.voces[q].archivo);
+  const filtros = presentes.map((q, i) => {
     const v = tl.voces[q];
     const inicio = Math.max(0, v.desfase - desfaseT), recorte = (v.recorteInicio || 0) + Math.max(0, desfaseT - v.desfase);
     audioArgs.push("-i", voces[q]);
     return `[${i + 1}:a]atrim=start=${recorte.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000,adelay=${Math.round(inicio * 1000)}:all=1[v${i}]`;
   });
-  audioMapa.push("-filter_complex", `${filtros.join(";")};[v0][v1]amix=inputs=2:normalize=0:dropout_transition=0,apad[a]`, "-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-ac", "2", "-shortest");
-  console.log(`Audio: Matías ${duracionAudio(voces.M).toFixed(1)} s desde ${tl.voces.M.desfase} s · Felipe ${duracionAudio(voces.F).toFixed(1)} s desde ${tl.voces.F.desfase} s`);
+  const mezcla = presentes.length === 2 ? "[v0][v1]amix=inputs=2:normalize=0:dropout_transition=0,apad[a]" : "[v0]apad[a]";
+  audioMapa.push("-filter_complex", `${filtros.join(";")};${mezcla}`, "-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-ac", "2", "-shortest");
+  for (const q of presentes) console.log(`Audio: ${q === "M" ? "Matías" : "Felipe"} ${duracionAudio(voces[q]).toFixed(1)} s, su primera palabra a los ${tl.voces[q].inicioVoz} s (${tl.voces[q].metodo})`);
 }
 function codificar(destino, conSubs) {
   const vf = conSubs ? ["-vf", `ass='${ass.replace(/\\/g, "/").replace(/:/g, "\\:")}'`] : [];
