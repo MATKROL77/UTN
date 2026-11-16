@@ -1,0 +1,191 @@
+{
+  "_ayuda": "Tiempos (en segundos de video) de cada frase del guion. 'fuente' indica si son estimados o medidos sobre las voces reales. Se puede corregir a mano cualquier 'inicio'/'fin', o fijar un cue puntual en 'cuesManuales' (por ejemplo \"M5.e0\": 61.4).",
+  "fuente": "estimacion",
+  "fps": 30,
+  "parametros": {
+    "entrada": 3.4,
+    "pausaRelevo": 1,
+    "colchonFinal": 1.2,
+    "pantallaFinal": 9,
+    "segundosPorParte": 150
+  },
+  "voces": {
+    "M": {
+      "archivo": null,
+      "desfase": 3.4,
+      "inicioVoz": 3.4,
+      "finVoz": 153.4
+    },
+    "F": {
+      "archivo": null,
+      "desfase": 154.4,
+      "inicioVoz": 154.4,
+      "finVoz": 304.4
+    }
+  },
+  "frases": [
+    {
+      "id": "M1.1",
+      "inicio": 3.4,
+      "fin": 3.982
+    },
+    {
+      "id": "M1.2",
+      "inicio": 4.482,
+      "fin": 17.278
+    },
+    {
+      "id": "M2.1",
+      "inicio": 18.178,
+      "fin": 37.663
+    },
+    {
+      "id": "M3.1",
+      "inicio": 38.563,
+      "fin": 46.512
+    },
+    {
+      "id": "M4.1",
+      "inicio": 47.412,
+      "fin": 59.142
+    },
+    {
+      "id": "M5.1",
+      "inicio": 60.042,
+      "fin": 68.863
+    },
+    {
+      "id": "M5.2",
+      "inicio": 69.363,
+      "fin": 73.919
+    },
+    {
+      "id": "M5.3",
+      "inicio": 74.419,
+      "fin": 81.787
+    },
+    {
+      "id": "M6.1",
+      "inicio": 82.687,
+      "fin": 94.223
+    },
+    {
+      "id": "M7.1",
+      "inicio": 95.123,
+      "fin": 106.077
+    },
+    {
+      "id": "M8.1",
+      "inicio": 106.977,
+      "fin": 111.145
+    },
+    {
+      "id": "M8.2",
+      "inicio": 111.645,
+      "fin": 121.339
+    },
+    {
+      "id": "M9.1",
+      "inicio": 122.239,
+      "fin": 129.704
+    },
+    {
+      "id": "M9.2",
+      "inicio": 130.204,
+      "fin": 139.801
+    },
+    {
+      "id": "M10.1",
+      "inicio": 140.701,
+      "fin": 153.4
+    },
+    {
+      "id": "F1.1",
+      "inicio": 154.4,
+      "fin": 162.669
+    },
+    {
+      "id": "F2.1",
+      "inicio": 163.569,
+      "fin": 169.688
+    },
+    {
+      "id": "F3.1",
+      "inicio": 170.588,
+      "fin": 179.437
+    },
+    {
+      "id": "F4.1",
+      "inicio": 180.337,
+      "fin": 184.471
+    },
+    {
+      "id": "F4.2",
+      "inicio": 184.971,
+      "fin": 191.173
+    },
+    {
+      "id": "F4.3",
+      "inicio": 191.673,
+      "fin": 197.048
+    },
+    {
+      "id": "F5.1",
+      "inicio": 197.948,
+      "fin": 205.39
+    },
+    {
+      "id": "F6.1",
+      "inicio": 206.29,
+      "fin": 210.59
+    },
+    {
+      "id": "F6.2",
+      "inicio": 211.09,
+      "fin": 217.127
+    },
+    {
+      "id": "F7.1",
+      "inicio": 218.027,
+      "fin": 230.183
+    },
+    {
+      "id": "F8.1",
+      "inicio": 231.083,
+      "fin": 239.848
+    },
+    {
+      "id": "F8.2",
+      "inicio": 240.348,
+      "fin": 243.16
+    },
+    {
+      "id": "F9.1",
+      "inicio": 244.06,
+      "fin": 257.869
+    },
+    {
+      "id": "F10.1",
+      "inicio": 258.769,
+      "fin": 267.121
+    },
+    {
+      "id": "F10.2",
+      "inicio": 267.621,
+      "fin": 277.792
+    },
+    {
+      "id": "F11.1",
+      "inicio": 278.692,
+      "fin": 289.608
+    },
+    {
+      "id": "F12.1",
+      "inicio": 290.508,
+      "fin": 304.4
+    }
+  ],
+  "cuesManuales": {},
+  "inicioPantallaFinal": 305.6,
+  "duracion": 314.6
+}

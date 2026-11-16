@@ -1,0 +1,39 @@
+{
+  "name": "kepler-grupo14-video",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Video de presentación del proyecto integrador (Grupo 14). Composición por código: React + Vite, render con Playwright + FFmpeg.",
+  "scripts": {
+    "app": "node scripts/build-app.mjs",
+    "dev": "node scripts/build-app.mjs --if-missing && vite --host 127.0.0.1 --port 5180",
+    "timeline": "node scripts/timeline.mjs",
+    "sync": "node scripts/sync-audio.mjs",
+    "still": "node scripts/still.mjs",
+    "render": "node scripts/render.mjs",
+    "figuras": "python3 python/figuras_kepler.py",
+    "check": "tsc --noEmit && node scripts/check-guion.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.5",
+    "@fontsource-variable/jetbrains-mono": "^5.2.5",
+    "katex": "^0.16.22",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.16.7",
+    "@types/node": "^24.0.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "playwright": "1.63.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

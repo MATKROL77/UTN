@@ -1,0 +1,20 @@
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #05090f; overflow: hidden; }
+body { font-family: "Inter Variable", Inter, "Segoe UI", Arial, sans-serif; color: #dce6f4; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; font-synthesis: none; }
+.stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #080f1d; contain: strict; }
+.stage svg { overflow: visible; }
+.abs { position: absolute; left: 0; top: 0; }
+.full { position: absolute; inset: 0; }
+.katex { font-size: 1em; }
+.katex-display { margin: 0; }
+.katex .katex-html { white-space: nowrap; }
+.mono { font-family: "JetBrains Mono Variable", "JetBrains Mono", Consolas, monospace; }
+/* Reproductor de vista previa */
+.player { position: fixed; inset: 0; display: flex; flex-direction: column; background: #05090f; }
+.player-view { flex: 1; position: relative; overflow: hidden; }
+.player-bar { display: flex; gap: 14px; align-items: center; padding: 10px 16px; background: #0b1322; border-top: 1px solid #1c283b; font-size: 13px; color: #9fb0c8; }
+.player-bar button { background: #111d2f; border: 1px solid #2b3a50; color: #dce6f4; border-radius: 7px; padding: 7px 14px; font: inherit; cursor: pointer; }
+.player-bar input[type="range"] { flex: 1; accent-color: #6edfe8; }
+.player-bar .mono { color: #dce6f4; min-width: 150px; }
+.player-sub { max-width: 46ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a9cb7; }

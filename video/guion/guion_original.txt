@@ -1,0 +1,45 @@
+# MATIAS
+Buenas. Somos Matías Colimodio y Felipe de Ortúzar, del Grupo 14, y vamos a presentar nuestro proyecto integrador sobre movimiento plano y órbitas keplerianas.
+
+El objetivo del trabajo fue estudiar matemáticamente cómo se puede representar la trayectoria de un cuerpo sometido a una fuerza central atractiva, utilizando coordenadas polares y cartesianas, derivadas parciales y el jacobiano.
+
+Para empezar, utilizamos la ecuación orbital r igual a p dividido uno más e por el coseno de theta.
+
+En esta ecuación, p es un parámetro que determina la escala de la órbita y e es la excentricidad, que indica qué tan alargada es la trayectoria.
+
+Como podemos observar en nuestro simulador, cuando la excentricidad es cero tenemos una circunferencia. Si se encuentra entre cero y uno, obtenemos una elipse. Cuando vale uno, la trayectoria es parabólica y, cuando supera uno, es hiperbólica.
+
+Después trabajamos con las coordenadas cartesianas, utilizando las expresiones x igual a r por coseno de theta e y igual a r por seno de theta.
+
+También incorporamos una rotación y una traslación para poder cambiar la orientación y la posición de la órbita sin modificar su forma.
+
+Otro punto importante fue el cálculo del jacobiano. Al realizar las derivadas parciales de la transformación de coordenadas, obtuvimos que su determinante es igual a r.
+
+Esto permite justificar que el elemento de área en coordenadas polares es r por dr por d theta. Geométricamente, significa que un mismo ángulo abarca una región más grande cuanto mayor es la distancia al origen.
+
+Con estos resultados pudimos relacionar la geometría orbital con el cálculo de áreas, que es lo que vamos a utilizar para analizar la segunda ley de Kepler.
+
+# FELIPE
+Continuando con lo anterior, utilizamos el jacobiano para estudiar el área barrida por el radio vector de una órbita.
+
+Esta área se calcula mediante una integral de un medio por r al cuadrado respecto de theta.
+
+A partir de esto analizamos la segunda ley de Kepler, que establece que el radio vector barre áreas iguales en tiempos iguales.
+
+En nuestra página representamos dos sectores de una elipse. Aunque tienen diferentes amplitudes angulares, sus áreas son prácticamente iguales. Esto se debe a que el radio es mayor en algunas zonas de la órbita y menor en otras.
+
+Después estudiamos el potencial gravitatorio, definido como menos mu dividido por la distancia al foco.
+
+Calculamos sus derivadas parciales y obtuvimos el gradiente. El negativo de ese gradiente representa un campo dirigido hacia el centro de atracción.
+
+Como podemos ver en la página, las curvas de nivel del potencial son circunferencias concéntricas, mientras que las flechas del campo apuntan hacia el foco gravitatorio.
+
+También analizamos que, cuando nos alejamos del foco, el potencial se aproxima a cero y la intensidad del campo disminuye. En el foco, la función no está definida.
+
+Para complementar el trabajo utilizamos Python, con el que generamos representaciones de las órbitas, una superficie tridimensional del potencial y visualizaciones del campo gravitatorio.
+
+En la parte de ajuste planteamos una función de error para estimar los parámetros de una órbita a partir de observaciones. Como todavía no contamos con los datos oficiales del Grupo 14, utilizamos un conjunto de referencia únicamente para explicar el procedimiento.
+
+Finalmente, desarrollamos una página interactiva para visualizar estos conceptos y comprobar cómo cambian los resultados al modificar los parámetros.
+
+En conclusión, el proyecto nos permitió relacionar distintos temas de Análisis Matemático II y observar cómo las herramientas matemáticas pueden utilizarse para representar un fenómeno físico.
