@@ -3,6 +3,7 @@ import { E, clamp, lerp, prog } from "./core/anim";
 import { C } from "./core/theme";
 import { FRASES, T_FINAL, cue } from "./core/tl";
 import { NombreTag, Presenter, poseEn, type Gesto } from "./components/Presenter";
+import { SOLO } from "./core/modo";
 import { T, T_CONCL_APP } from "./tiempos";
 
 type Lugar = { t: number; x: number; y: number; s: number; dur?: number };
@@ -149,16 +150,19 @@ function hablaEn(t: number, quien: "M" | "F") {
 export function Presentadores({ t }: { t: number }) {
   const pm = lugarEn(t, lugarMati), pf = lugarEn(t, lugarFeli);
   const visible = (x: number) => x > -330 && x < 2250;
+  // Video de una sola parte: el otro presentador solo aparece donde corresponde (la conclusión compartida).
+  const verMati = SOLO !== "F" || t >= cue("F12") - 1.2;
+  const verFeli = SOLO !== "M" || t < cue("M2");
   const intro = cue("M2") - 1.6;
   const tagM = Math.min(prog(t, cue("M1.mati") - 0.3, 0.5, E.out), 1 - prog(t, cue("M10.fin") + 0.2, 0.4)) + Math.min(prog(t, cue("F12") + 0.2, 0.5), 1 - prog(t, T_FINAL - 0.6, 0.4));
   const tagF = Math.min(prog(t, cue("M1.feli") - 0.3, 0.5, E.out), 1 - prog(t, intro, 0.4)) + Math.min(prog(t, cue("F1") - 0.4, 0.5), 1 - prog(t, T_FINAL - 0.6, 0.4));
   const largoM = 1 - prog(t, intro - 0.2, 0.6), largoF = largoM;
   return (
     <>
-      {visible(pf.x) && <Presenter quien="feli" t={t} x={pf.x} y={pf.y} escala={pf.s} pose={poseEn(t, gestosFeli)} habla={hablaEn(t, "F")} />}
-      {visible(pm.x) && <Presenter quien="mati" t={t} x={pm.x} y={pm.y} escala={pm.s} pose={poseEn(t, gestosMati)} habla={hablaEn(t, "M")} />}
-      {visible(pm.x) && <NombreTag x={pm.x} y={pm.y - 318 * pm.s - 58} corto="MATI" nombre="Matías Colimodio" color={C.cyan} p={clamp(tagM)} largo={largoM} />}
-      {visible(pf.x) && <NombreTag x={pf.x} y={pf.y - 318 * pf.s - 58} corto="FELI" nombre="Felipe de Ortúzar" color={C.orange} p={clamp(tagF)} largo={largoF} />}
+      {verFeli && visible(pf.x) && <Presenter quien="feli" t={t} x={pf.x} y={pf.y} escala={pf.s} pose={poseEn(t, gestosFeli)} habla={hablaEn(t, "F")} />}
+      {verMati && visible(pm.x) && <Presenter quien="mati" t={t} x={pm.x} y={pm.y} escala={pm.s} pose={poseEn(t, gestosMati)} habla={hablaEn(t, "M")} />}
+      {verMati && visible(pm.x) && <NombreTag x={pm.x} y={pm.y - 318 * pm.s - 58} corto="MATI" nombre="Matías Colimodio" color={C.cyan} p={clamp(tagM)} largo={largoM} />}
+      {verFeli && visible(pf.x) && <NombreTag x={pf.x} y={pf.y - 318 * pf.s - 58} corto="FELI" nombre="Felipe de Ortúzar" color={C.orange} p={clamp(tagF)} largo={largoF} />}
     </>
   );
 }

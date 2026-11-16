@@ -15,9 +15,12 @@ import { FFMPEG, ROOT, argumentos, buscarAudio, calcularCues, correr, duracionAu
 import { abrirNavegador, abrirPagina, prepararSitio } from "./servidor.mjs";
 
 const { flags } = argumentos();
-const NOMBRE = flags.salida || "Kepler_Grupo14_Presentacion";
+// --solo F (o M): video de una sola parte, con un breve fundido de entrada o de salida.
+const SOLO = flags.solo === "F" || flags.solo === "M" ? flags.solo : null;
+const NOMBRE = flags.salida || (SOLO ? `Kepler_Grupo14_parte_${SOLO === "F" ? "Felipe" : "Matias"}_con_voz` : "Kepler_Grupo14_Presentacion");
+const EXTRA = SOLO ? `&solo=${SOLO}` : "";
 const TMP = path.join(ROOT, "out/render");
-const parcial = flags.desde !== undefined || flags.hasta !== undefined;
+const parcial = !SOLO && (flags.desde !== undefined || flags.hasta !== undefined);
 const t0 = Date.now();
 const seg = () => `${((Date.now() - t0) / 1000).toFixed(0)} s`;
 
@@ -32,11 +35,14 @@ if (hayVoces && !(voces.M && voces.F)) console.log(`ℹ Solo está la voz de ${v
 const sitio = await prepararSitio();
 const tl = leerTimeline();
 const navegador0 = await abrirNavegador();
-const { info } = await abrirPagina(navegador0, sitio.url);
+const { info } = await abrirPagina(navegador0, sitio.url, EXTRA);
 await navegador0.close();
 const fps = info.fps;
-const f0 = Math.max(0, Math.round(Number(flags.desde ?? 0) * fps));
-const f1 = Math.min(info.frames, Math.round(Number(flags.hasta ?? info.duracion) * fps));
+const cuesTl = calcularCues(guion, tl).cues;
+const desdeSolo = SOLO === "F" ? cuesTl.F1 - 1.0 : 0;
+const hastaSolo = SOLO === "M" ? cuesTl["M10.fin"] + 1.0 : info.duracion;
+const f0 = Math.max(0, Math.round(Number(flags.desde ?? (SOLO ? desdeSolo : 0)) * fps));
+const f1 = Math.min(info.frames, Math.round(Number(flags.hasta ?? (SOLO ? hastaSolo : info.duracion)) * fps));
 const total = f1 - f0;
 console.log(`Render: cuadros ${f0}–${f1 - 1} (${(total / fps).toFixed(1)} s a ${fps} fps) · tiempos: ${tl.fuente}`);
 
@@ -58,7 +64,7 @@ const codificador = (archivo) => spawn(FFMPEG, [
 
 async function trabajador() {
   const navegador = await abrirNavegador();
-  let pagina = await abrirPagina(navegador, sitio.url);
+  let pagina = await abrirPagina(navegador, sitio.url, EXTRA);
   while (siguiente < tramos.length) {
     const tr = tramos[siguiente++];
     const archivo = path.join(TMP, `tramo_${String(tr.i).padStart(4, "0")}.mp4`);
@@ -87,7 +93,7 @@ async function trabajador() {
         console.log(`  ↻ reintento del tramo ${tr.i}: ${String(e.message).slice(0, 160)}`);
         hechos -= hechos % 1; // el contador es aproximado tras un reintento
         await pagina.cerrar().catch(() => undefined);
-        pagina = await abrirPagina(navegador, sitio.url);
+        pagina = await abrirPagina(navegador, sitio.url, EXTRA);
       }
     }
   }
@@ -151,7 +157,11 @@ if (hayVoces && tl.fuente === "audio") {
   for (const q of presentes) console.log(`Audio: ${q === "M" ? "Matías" : "Felipe"} ${duracionAudio(voces[q]).toFixed(1)} s, su primera palabra a los ${tl.voces[q].inicioVoz} s (${tl.voces[q].metodo})`);
 }
 function codificar(destino, conSubs) {
-  const vf = conSubs ? ["-vf", `ass='${ass.replace(/\\/g, "/").replace(/:/g, "\\:")}'`] : [];
+  const filtros = [];
+  if (conSubs) filtros.push(`ass='${ass.replace(/\\/g, "/").replace(/:/g, "\\:")}'`);
+  if (SOLO === "F") filtros.push("fade=t=in:st=0:d=0.5");
+  if (SOLO === "M") filtros.push(`fade=t=out:st=${(total / fps - 0.6).toFixed(2)}:d=0.6`);
+  const vf = filtros.length ? ["-vf", filtros.join(",")] : [];
   correr(FFMPEG, [
     "-v", "error", "-nostats", "-y", "-i", maestro, ...audioArgs, "-map", "0:v", ...audioMapa, ...vf,
     "-c:v", "libx264", "-preset", flags.preset || "slow", "-crf", crf, "-pix_fmt", "yuv420p", "-profile:v", "high", "-level", "4.1", "-r", String(fps),

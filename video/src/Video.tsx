@@ -3,6 +3,7 @@ import { Background } from "./components/Background";
 import { Defs } from "./components/Plano";
 import { E, prog } from "./core/anim";
 import { C, FONT, MONO } from "./core/theme";
+import { SOLO } from "./core/modo";
 import { DUR, T_FINAL, cue } from "./core/tl";
 import { Presentadores } from "./presentadores";
 import { D_OUT, type DefEscena } from "./escenas/comun";
@@ -37,14 +38,18 @@ export const ESCENAS: DefEscena[] = cortes.map(([id, ini, titulo, Comp], i) => (
 }));
 
 function Capitulo({ t }: { t: number }) {
-  const i = ESCENAS.findIndex((e, k) => t >= e.ini && (k === ESCENAS.length - 1 || t < ESCENAS[k + 1].ini));
+  const kep = ESCENAS.findIndex((x) => x.id === "kepler");
+  let i = ESCENAS.findIndex((e, k) => t >= e.ini && (k === ESCENAS.length - 1 || t < ESCENAS[k + 1].ini));
+  if (SOLO === "F") i = Math.max(i, kep);
   const e = ESCENAS[Math.max(0, i)];
   if (e.id === "intro" || e.id === "final") return null;
-  const p = Math.min(prog(t, e.ini + 0.25, 0.5, E.out), 1 - prog(t, (ESCENAS[i + 1]?.ini ?? DUR) - 0.3, 0.3));
+  const entra = SOLO === "F" && i === kep ? 1 : prog(t, e.ini + 0.25, 0.5, E.out);
+  const p = Math.min(entra, 1 - prog(t, (ESCENAS[i + 1]?.ini ?? DUR) - 0.3, 0.3));
+  const numero = SOLO === "F" ? i - kep + 1 : i; // en el video de una parte, los capítulos se numeran desde 01
   return (
     <div className="abs" style={{ left: 64, top: 30, opacity: p, transform: `translateX(${(1 - p) * -14}px)`, display: "flex", alignItems: "center", gap: 14, fontFamily: FONT, whiteSpace: "nowrap" }}>
       <span style={{ fontFamily: MONO, fontSize: 17, color: C.cyan, fontWeight: 600, padding: "5px 10px", borderRadius: 8, background: "rgba(110,223,232,.09)", border: "1px solid rgba(110,223,232,.3)" }}>
-        {String(i).padStart(2, "0")}
+        {String(numero).padStart(2, "0")}
       </span>
       <span style={{ fontSize: 17, letterSpacing: 3.4, fontWeight: 650, color: "#a9bbd3", textTransform: "uppercase" }}>{e.titulo}</span>
     </div>
@@ -56,7 +61,14 @@ export function Video({ t }: { t: number; v?: number }) {
     <div className="stage">
       <Background t={t} />
       <Defs />
-      {ESCENAS.map((e) => (t >= e.ini - 0.05 && t <= e.fin + 0.05 ? <e.C key={e.id} t={t} ini={e.ini} fin={e.fin} /> : null))}
+      {ESCENAS.map((e, i) => {
+        // En el video de una sola parte no se muestran las escenas del otro presentador.
+        const deFelipe = i >= ESCENAS.findIndex((x) => x.id === "kepler");
+        if ((SOLO === "F" && !deFelipe) || (SOLO === "M" && deFelipe)) return null;
+        // El video de Felipe abre con su primera escena ya presente (el fundido de entrada lo hace el render).
+        const ini = SOLO === "F" && e.id === "kepler" ? e.ini - 1.5 : e.ini;
+        return t >= ini - 0.05 && t <= e.fin + 0.05 ? <e.C key={e.id} t={t} ini={ini} fin={e.fin} /> : null;
+      })}
       <Presentadores t={t} />
       <Capitulo t={t} />
     </div>

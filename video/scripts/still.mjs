@@ -26,7 +26,7 @@ const tiempos = pos.flatMap((x) => {
   return [Number(x)];
 });
 const navegador = await abrirNavegador();
-const { info, capturar } = await abrirPagina(navegador, sitio.url);
+const { info, capturar } = await abrirPagina(navegador, sitio.url, flags.solo ? `&solo=${flags.solo}` : "");
 const archivos = [];
 for (const t of tiempos) {
   const frame = Math.max(0, Math.min(info.frames - 1, Math.round(t * info.fps)));

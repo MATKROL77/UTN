@@ -47,13 +47,13 @@ export async function abrirNavegador() {
   }
 }
 
-export async function abrirPagina(navegador, url) {
+export async function abrirPagina(navegador, url, extra = "") {
   const contexto = await navegador.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1, reducedMotion: "reduce", colorScheme: "dark" });
   const pagina = await contexto.newPage();
   const errores = [];
   pagina.on("pageerror", (e) => errores.push(e.message));
   pagina.on("console", (m) => { if (m.type() === "error") errores.push(m.text()); });
-  await pagina.goto(`${url}/?render=1`);
+  await pagina.goto(`${url}/?render=1${extra}`);
   await pagina.evaluate(() => window.__listo);
   const info = await pagina.evaluate(() => window.__info);
   const cdp = await contexto.newCDPSession(pagina);

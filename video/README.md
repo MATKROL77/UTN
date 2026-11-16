@@ -59,6 +59,10 @@ lista las diferencias entre lo oído y el guion. Sin ese archivo, la alineación
 Las grabaciones (`audio/*.wav`, `*.m4a`, …) y los videos `*_con_voz*` están en `.gitignore`: son voces de personas
 y este repositorio es público. Quitar esas líneas solo si se decide subirlas.
 
+**Video de una sola parte.** `npm run render -- --solo F` genera únicamente la parte de Felipe (o `--solo M` la de
+Matías): arranca un segundo antes de su primera palabra, no muestra al otro presentador en la entrada y numera los
+capítulos desde 01. Sale como `Kepler_Grupo14_parte_Felipe_con_voz.mp4`.
+
 Para revisar la sincronía antes de renderizar: `npm run sync` y luego `npm run dev` (la vista previa reproduce
 las voces). Si alguna frase quedó corrida (el script marca las dudosas con `⚠ revisar`):
 
