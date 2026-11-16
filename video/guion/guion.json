@@ -1,31 +1,106 @@
 {
-  "_ayuda": "Guion exacto, en el orden en que se lee. NO cambiar las palabras: scripts/check-guion.mjs las compara con guion_original.txt. Las marcas {{nombre}} no se leen: señalan la palabra exacta donde arranca una animación (cue). Un cue se nombra <párrafo>.<nombre>, por ejemplo M5.e0.",
+  "_ayuda": "Guion exacto, en el orden en que se lee. NO cambiar las palabras: scripts/check-guion.mjs las compara con guion_original.txt. Las marcas {{nombre}} no se leen: señalan la palabra exacta donde arranca una animación (cue). Un cue se nombra <párrafo>.<nombre>, por ejemplo M5.e0. El campo opcional \"dicho\" guarda lo que se dijo realmente al grabar cuando difiere del guion (misma cantidad de palabras y de frases): solo se usa para los subtítulos.",
   "hablantes": {
-    "M": { "nombre": "Matías Colimodio", "corto": "MATI", "audio": "voz_matias.wav" },
-    "F": { "nombre": "Felipe de Ortúzar", "corto": "FELI", "audio": "voz_felipe.wav" }
+    "M": {
+      "nombre": "Matías Colimodio",
+      "corto": "MATI",
+      "audio": "voz_matias.wav"
+    },
+    "F": {
+      "nombre": "Felipe de Ortúzar",
+      "corto": "FELI",
+      "audio": "voz_felipe.wav"
+    }
   },
   "parrafos": [
-    { "id": "M1", "texto": "Buenas. {{somos}}Somos {{mati}}Matías Colimodio y {{feli}}Felipe de Ortúzar, {{grupo}}del Grupo 14, y vamos a presentar {{proyecto}}nuestro proyecto integrador sobre {{tema}}movimiento plano y órbitas keplerianas." },
-    { "id": "M2", "texto": "El objetivo del trabajo fue estudiar matemáticamente cómo se puede representar {{tray}}la trayectoria de un cuerpo sometido a {{fuerza}}una fuerza central atractiva, utilizando {{polares}}coordenadas polares {{cart}}y cartesianas, {{deriv}}derivadas parciales {{jac}}y el jacobiano." },
-    { "id": "M3", "texto": "Para empezar, utilizamos {{ec}}la ecuación orbital {{r}}r igual a {{p}}p dividido {{den}}uno más e por el coseno de theta." },
-    { "id": "M4", "texto": "En esta ecuación, {{p}}p es un parámetro que determina {{escala}}la escala de la órbita {{e}}y e es la excentricidad, que indica {{forma}}qué tan alargada es la trayectoria." },
-    { "id": "M5", "texto": "Como podemos observar {{sim}}en nuestro simulador, {{e0}}cuando la excentricidad es cero {{circ}}tenemos una circunferencia. {{e01}}Si se encuentra entre cero y uno, {{elipse}}obtenemos una elipse. {{e1}}Cuando vale uno, {{parab}}la trayectoria es parabólica y, {{e2}}cuando supera uno, {{hiper}}es hiperbólica." },
-    { "id": "M6", "texto": "Después trabajamos con {{cart}}las coordenadas cartesianas, utilizando las expresiones {{x}}x igual a r por coseno de theta {{y}}e y igual a r por seno de theta." },
-    { "id": "M7", "texto": "También incorporamos {{rot}}una rotación {{tras}}y una traslación para poder cambiar {{orient}}la orientación {{pos}}y la posición de la órbita {{forma}}sin modificar su forma." },
-    { "id": "M8", "texto": "Otro punto importante fue {{jac}}el cálculo del jacobiano. {{deriv}}Al realizar las derivadas parciales de la transformación de coordenadas, {{det}}obtuvimos que su determinante {{r}}es igual a r." },
-    { "id": "M9", "texto": "Esto permite justificar que {{dA}}el elemento de área en coordenadas polares es {{rdrdt}}r por dr por d theta. {{geo}}Geométricamente, significa que {{ang}}un mismo ángulo abarca {{grande}}una región más grande cuanto mayor es {{dist}}la distancia al origen." },
-    { "id": "M10", "texto": "Con estos resultados pudimos relacionar {{geo}}la geometría orbital con {{areas}}el cálculo de áreas, que es lo que vamos a utilizar para analizar {{kepler}}la segunda ley de Kepler." },
-    { "id": "F1", "texto": "Continuando con lo anterior, utilizamos {{jac}}el jacobiano para estudiar {{area}}el área barrida por el radio vector de una órbita." },
-    { "id": "F2", "texto": "Esta área se calcula mediante {{int}}una integral de {{medio}}un medio por r al cuadrado {{dtheta}}respecto de theta." },
-    { "id": "F3", "texto": "A partir de esto analizamos {{ley}}la segunda ley de Kepler, que establece que el radio vector barre {{iguales}}áreas iguales en tiempos iguales." },
-    { "id": "F4", "texto": "{{pag}}En nuestra página representamos {{sect}}dos sectores de una elipse. {{amp}}Aunque tienen diferentes amplitudes angulares, {{areas}}sus áreas son prácticamente iguales. {{radio}}Esto se debe a que el radio es {{mayor}}mayor en algunas zonas de la órbita {{menor}}y menor en otras." },
-    { "id": "F5", "texto": "Después estudiamos {{pot}}el potencial gravitatorio, definido como {{mu}}menos mu dividido por {{dist}}la distancia al foco." },
-    { "id": "F6", "texto": "{{deriv}}Calculamos sus derivadas parciales {{grad}}y obtuvimos el gradiente. {{neg}}El negativo de ese gradiente representa {{campo}}un campo dirigido hacia el centro de atracción." },
-    { "id": "F7", "texto": "{{pag}}Como podemos ver en la página, {{nivel}}las curvas de nivel del potencial son circunferencias concéntricas, {{flechas}}mientras que las flechas del campo apuntan hacia el foco gravitatorio." },
-    { "id": "F8", "texto": "También analizamos que, {{lejos}}cuando nos alejamos del foco, {{cero}}el potencial se aproxima a cero {{int}}y la intensidad del campo disminuye. {{foco}}En el foco, la función no está definida." },
-    { "id": "F9", "texto": "Para complementar el trabajo {{py}}utilizamos Python, con el que generamos {{orb}}representaciones de las órbitas, {{sup}}una superficie tridimensional del potencial {{campo}}y visualizaciones del campo gravitatorio." },
-    { "id": "F10", "texto": "{{ajuste}}En la parte de ajuste planteamos {{error}}una función de error para estimar {{param}}los parámetros de una órbita a partir de {{obs}}observaciones. {{datos}}Como todavía no contamos con los datos oficiales del Grupo 14, {{ref}}utilizamos un conjunto de referencia únicamente para explicar el procedimiento." },
-    { "id": "F11", "texto": "Finalmente, desarrollamos {{pag}}una página interactiva para visualizar estos conceptos {{mod}}y comprobar cómo cambian los resultados al modificar los parámetros." },
-    { "id": "F12", "texto": "{{concl}}En conclusión, el proyecto nos permitió relacionar {{temas}}distintos temas de Análisis Matemático II {{obs}}y observar cómo las herramientas matemáticas pueden utilizarse para representar {{fis}}un fenómeno físico." }
+    {
+      "id": "M1",
+      "texto": "Buenas. {{somos}}Somos {{mati}}Matías Colimodio y {{feli}}Felipe de Ortúzar, {{grupo}}del Grupo 14, y vamos a presentar {{proyecto}}nuestro proyecto integrador sobre {{tema}}movimiento plano y órbitas keplerianas.",
+      "dicho": "Hola. Somos Matías Colimodio y Felipe de Ortúzar, del Grupo 14, y vamos a presentar nuestro proyecto integrador sobre movimiento plano y órbitas keplerianas."
+    },
+    {
+      "id": "M2",
+      "texto": "El objetivo del trabajo fue estudiar matemáticamente cómo se puede representar {{tray}}la trayectoria de un cuerpo sometido a {{fuerza}}una fuerza central atractiva, utilizando {{polares}}coordenadas polares {{cart}}y cartesianas, {{deriv}}derivadas parciales {{jac}}y el jacobiano."
+    },
+    {
+      "id": "M3",
+      "texto": "Para empezar, utilizamos {{ec}}la ecuación orbital {{r}}r igual a {{p}}p dividido {{den}}uno más e por el coseno de theta."
+    },
+    {
+      "id": "M4",
+      "texto": "En esta ecuación, {{p}}p es un parámetro que determina {{escala}}la escala de la órbita {{e}}y e es la excentricidad, que indica {{forma}}qué tan alargada es la trayectoria."
+    },
+    {
+      "id": "M5",
+      "texto": "Como podemos observar {{sim}}en nuestro simulador, {{e0}}cuando la excentricidad es cero {{circ}}tenemos una circunferencia. {{e01}}Si se encuentra entre cero y uno, {{elipse}}obtenemos una elipse. {{e1}}Cuando vale uno, {{parab}}la trayectoria es parabólica y, {{e2}}cuando supera uno, {{hiper}}es hiperbólica."
+    },
+    {
+      "id": "M6",
+      "texto": "Después trabajamos con {{cart}}las coordenadas cartesianas, utilizando las expresiones {{x}}x igual a r por coseno de theta {{y}}e y igual a r por seno de theta."
+    },
+    {
+      "id": "M7",
+      "texto": "También incorporamos {{rot}}una rotación {{tras}}y una traslación para poder cambiar {{orient}}la orientación {{pos}}y la posición de la órbita {{forma}}sin modificar su forma."
+    },
+    {
+      "id": "M8",
+      "texto": "Otro punto importante fue {{jac}}el cálculo del jacobiano. {{deriv}}Al realizar las derivadas parciales de la transformación de coordenadas, {{det}}obtuvimos que su determinante {{r}}es igual a r."
+    },
+    {
+      "id": "M9",
+      "texto": "Esto permite justificar que {{dA}}el elemento de área en coordenadas polares es {{rdrdt}}r por dr por d theta. {{geo}}Geométricamente, significa que {{ang}}un mismo ángulo abarca {{grande}}una región más grande cuanto mayor es {{dist}}la distancia al origen."
+    },
+    {
+      "id": "M10",
+      "texto": "Con estos resultados pudimos relacionar {{geo}}la geometría orbital con {{areas}}el cálculo de áreas, que es lo que vamos a utilizar para analizar {{kepler}}la segunda ley de Kepler."
+    },
+    {
+      "id": "F1",
+      "texto": "Continuando con lo anterior, utilizamos {{jac}}el jacobiano para estudiar {{area}}el área barrida por el radio vector de una órbita."
+    },
+    {
+      "id": "F2",
+      "texto": "Esta área se calcula mediante {{int}}una integral de {{medio}}un medio por r al cuadrado {{dtheta}}respecto de theta."
+    },
+    {
+      "id": "F3",
+      "texto": "A partir de esto analizamos {{ley}}la segunda ley de Kepler, que establece que el radio vector barre {{iguales}}áreas iguales en tiempos iguales."
+    },
+    {
+      "id": "F4",
+      "texto": "{{pag}}En nuestra página representamos {{sect}}dos sectores de una elipse. {{amp}}Aunque tienen diferentes amplitudes angulares, {{areas}}sus áreas son prácticamente iguales. {{radio}}Esto se debe a que el radio es {{mayor}}mayor en algunas zonas de la órbita {{menor}}y menor en otras."
+    },
+    {
+      "id": "F5",
+      "texto": "Después estudiamos {{pot}}el potencial gravitatorio, definido como {{mu}}menos mu dividido por {{dist}}la distancia al foco."
+    },
+    {
+      "id": "F6",
+      "texto": "{{deriv}}Calculamos sus derivadas parciales {{grad}}y obtuvimos el gradiente. {{neg}}El negativo de ese gradiente representa {{campo}}un campo dirigido hacia el centro de atracción."
+    },
+    {
+      "id": "F7",
+      "texto": "{{pag}}Como podemos ver en la página, {{nivel}}las curvas de nivel del potencial son circunferencias concéntricas, {{flechas}}mientras que las flechas del campo apuntan hacia el foco gravitatorio."
+    },
+    {
+      "id": "F8",
+      "texto": "También analizamos que, {{lejos}}cuando nos alejamos del foco, {{cero}}el potencial se aproxima a cero {{int}}y la intensidad del campo disminuye. {{foco}}En el foco, la función no está definida."
+    },
+    {
+      "id": "F9",
+      "texto": "Para complementar el trabajo {{py}}utilizamos Python, con el que generamos {{orb}}representaciones de las órbitas, {{sup}}una superficie tridimensional del potencial {{campo}}y visualizaciones del campo gravitatorio."
+    },
+    {
+      "id": "F10",
+      "texto": "{{ajuste}}En la parte de ajuste planteamos {{error}}una función de error para estimar {{param}}los parámetros de una órbita a partir de {{obs}}observaciones. {{datos}}Como todavía no contamos con los datos oficiales del Grupo 14, {{ref}}utilizamos un conjunto de referencia únicamente para explicar el procedimiento."
+    },
+    {
+      "id": "F11",
+      "texto": "Finalmente, desarrollamos {{pag}}una página interactiva para visualizar estos conceptos {{mod}}y comprobar cómo cambian los resultados al modificar los parámetros."
+    },
+    {
+      "id": "F12",
+      "texto": "{{concl}}En conclusión, el proyecto nos permitió relacionar {{temas}}distintos temas de Análisis Matemático II {{obs}}y observar cómo las herramientas matemáticas pueden utilizarse para representar {{fis}}un fenómeno físico."
+    }
   ]
 }

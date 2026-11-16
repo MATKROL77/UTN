@@ -42,7 +42,13 @@ con tiempos estimados. El render detecta las voces y:
   reescribe `timeline.json`; todas las escenas se estiran o se acortan solas, porque cada animación está atada
   a una palabra del guion y no a un segundo fijo;
 - **mezcla** las dos voces en el MP4 en el orden del guion (primero Matías, después Felipe), sin cortarlas ni
-  cambiarles la velocidad; la duración del video se adapta a la lectura.
+  cambiarles la velocidad; la duración del video se adapta a la lectura;
+- **nivela el volumen**: mide cada grabación y le aplica una ganancia fija para que las dos suenen igual
+  (−18 LUFS), con un limitador que solo actúa sobre picos aislados (`--sin-nivelar` lo desactiva).
+
+Si al grabar se dijo algo distinto del guion (por ejemplo «Hola» en lugar de «Buenas»), se puede anotar en
+`guion/guion.json` con el campo `"dicho"` del párrafo, manteniendo la cantidad de palabras: los subtítulos
+muestran lo dicho y `texto` sigue siendo el guion original.
 
 **Alineación fina, palabra por palabra (opcional, recomendada).** Antes del render:
 

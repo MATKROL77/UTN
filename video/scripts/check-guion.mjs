@@ -26,6 +26,12 @@ for (const quien of ["M", "F"]) {
     }
   });
 }
+for (const p of guion.parrafos) {
+  if (!p.dicho) continue;
+  const n = (s) => s.split(/\s+/).filter(Boolean).length;
+  const a = limpiar(p.texto).match(/[^.]+\.?/g).map((s) => n(s)), b = p.dicho.match(/[^.]+\.?/g).map((s) => n(s));
+  if (a.join() !== b.join()) { console.error(`✗ ${p.id}: "dicho" debe tener las mismas frases y la misma cantidad de palabras que el guion (${a.join("+")} vs ${b.join("+")}).`); errores++; }
+}
 const orden = guion.parrafos.map((p) => p.id[0]).join("");
 if (!/^M+F+$/.test(orden)) { console.error("✗ El orden debe ser: todos los párrafos de Matías y luego los de Felipe."); errores++; }
 const ids = new Set();

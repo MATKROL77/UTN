@@ -38,6 +38,10 @@ export function calcularCues(guion, timeline) {
   const frases = [];
   for (const p of guion.parrafos) {
     const fs = frasesDe(p);
+    // Texto para subtítulos: lo efectivamente dicho, si se anotó y conserva frases y palabras.
+    const dichas = p.dicho ? frasesDe({ id: p.id, texto: p.dicho }) : null;
+    const contar = (s) => s.split(/\s+/).filter(Boolean).length;
+    const usarDicho = dichas && dichas.length === fs.length && dichas.every((d, k) => contar(d.texto) === contar(limpiar(fs[k].texto)));
     fs.forEach((f, i) => {
       const t = tiempos.get(f.id);
       if (!t) throw new Error(`timeline.json no tiene la frase ${f.id}. Ejecutá "npm run timeline" o "npm run sync".`);
@@ -49,7 +53,7 @@ export function calcularCues(guion, timeline) {
         const antes = peso(f.texto.slice(0, m.index));
         cues[`${p.id}.${m[1]}`] = t.inicio + (antes / total) * (t.fin - t.inicio);
       }
-      frases.push({ id: f.id, parrafo: p.id, texto: limpiar(f.texto), inicio: t.inicio, fin: t.fin });
+      frases.push({ id: f.id, parrafo: p.id, texto: usarDicho ? dichas[i].texto : limpiar(f.texto), inicio: t.inicio, fin: t.fin });
     });
     const ini = tiempos.get(fs[0].id).inicio;
     const fin = tiempos.get(fs[fs.length - 1].id).fin;

@@ -5,6 +5,7 @@ descarga el modelo la primera vez. No genera ni modifica ninguna voz; solo mide 
 
     pip install faster-whisper
     python3 scripts/alinear_palabras.py            (desde la carpeta video/)
+    python3 scripts/alinear_palabras.py large-v3-turbo M     (modelo y, opcionalmente, solo M o F)
 
 Por cada grabación presente en audio/ escribe audio/voz_<nombre>.palabras.json. Si ese archivo existe,
 "npm run sync" lo usa para fijar cada frase y cada cue en la palabra exacta (en vez de guiarse solo por las pausas).
@@ -21,7 +22,8 @@ import unicodedata
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-MODELO = sys.argv[1] if len(sys.argv) > 1 else "small"
+MODELO = sys.argv[1] if len(sys.argv) > 1 else "large-v3-turbo"  # "small" es más liviano y algo menos preciso
+SOLO = sys.argv[2] if len(sys.argv) > 2 else None  # opcional: M o F, para medir una sola grabación
 
 
 def limpiar(texto: str) -> str:
@@ -66,6 +68,8 @@ def main():
     guion = json.loads((RAIZ / "guion" / "guion.json").read_text(encoding="utf8"))
     modelo = None
     for quien, datos in guion["hablantes"].items():
+        if SOLO and quien != SOLO:
+            continue
         audio = buscar_audio(datos["audio"])
         if not audio:
             print(f"– {datos['nombre']}: todavía no hay grabación ({datos['audio']}).")

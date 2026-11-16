@@ -7,7 +7,7 @@
 //
 // Si existen audio/voz_matias.wav y audio/voz_felipe.wav se alinea la línea de tiempo con las voces
 // (scripts/sync-audio.mjs) y se mezclan en el MP4 sin modificarlas: no se cortan ni se aceleran.
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -146,11 +146,22 @@ const crf = String(flags.crf || 19);
 const audioArgs = [], audioMapa = [];
 if (hayVoces && tl.fuente === "audio") {
   const presentes = ["M", "F"].filter((q) => voces[q] && tl.voces[q].archivo);
+  // Nivelación: una ganancia fija por voz para que las dos suenen al mismo volumen (−18 LUFS), con un limitador
+  // que solo actúa sobre picos aislados. No cambia la velocidad, la duración ni el contenido de las grabaciones.
+  const sonoridad = (archivo) => {
+    const r = spawnSync(FFMPEG, ["-hide_banner", "-nostats", "-i", archivo, "-af", "ebur128", "-f", "null", "-"], { encoding: "utf8" });
+    const m = [...(r.stderr || "").matchAll(/I:\s+(-?[\d.]+) LUFS/g)].pop();
+    return m ? Number(m[1]) : null;
+  };
   const filtros = presentes.map((q, i) => {
     const v = tl.voces[q];
     const inicio = Math.max(0, v.desfase - desfaseT), recorte = (v.recorteInicio || 0) + Math.max(0, desfaseT - v.desfase);
     audioArgs.push("-i", voces[q]);
-    return `[${i + 1}:a]atrim=start=${recorte.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000,adelay=${Math.round(inicio * 1000)}:all=1[v${i}]`;
+    const lufs = flags["sin-nivelar"] ? null : sonoridad(voces[q]);
+    const ganancia = lufs === null ? 0 : Math.max(-12, Math.min(9, -18 - lufs));
+    if (lufs !== null) console.log(`Volumen: ${q === "M" ? "Matías" : "Felipe"} ${lufs.toFixed(1)} LUFS → ganancia ${ganancia >= 0 ? "+" : ""}${ganancia.toFixed(1)} dB`);
+    const nivel = lufs === null ? "" : `,volume=${ganancia.toFixed(2)}dB,alimiter=limit=0.89:attack=5:release=60:level=false`;
+    return `[${i + 1}:a]atrim=start=${recorte.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000${nivel},adelay=${Math.round(inicio * 1000)}:all=1[v${i}]`;
   });
   const mezcla = presentes.length === 2 ? "[v0][v1]amix=inputs=2:normalize=0:dropout_transition=0,apad[a]" : "[v0]apad[a]";
   audioMapa.push("-filter_complex", `${filtros.join(";")};${mezcla}`, "-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-ac", "2", "-shortest");
